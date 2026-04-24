@@ -1,0 +1,178 @@
+.leaflet-transparent-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.leaflet-popup-content-wrapper {
+  font-family: var(--chakra-fonts-body);
+  border-radius: var(--chakra-radii-l3);
+}
+.leaflet-popup-content {
+  margin: var(--chakra-spacing-2);
+  min-width: 10rem;
+}
+
+.vector-marker-div-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Vector hover tooltip — fully opaque card, overrides all Leaflet transparency defaults */
+.leaflet-tooltip.vector-marker-tooltip {
+  font-family: var(--font-sans, var(--chakra-fonts-body));
+  padding: 0;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-lg);
+  /* Fixed comfortable width — values wrap inside; no scrollbar needed */
+  width: 22rem;
+  max-width: min(22rem, calc(100vw - 2rem));
+  /* Let height grow with content — no scroll */
+  overflow: visible;
+  /* Force solid surface — Leaflet defaults to rgba(255,255,255,0.83) background */
+  background: hsl(var(--popover)) !important;
+  background-color: hsl(var(--popover)) !important;
+  background-image: none !important;
+  color: hsl(var(--popover-foreground)) !important;
+  /* Leaflet sets opacity:0.9 on .leaflet-tooltip — override to fully opaque */
+  opacity: 1 !important;
+  filter: none;
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.10),
+    0 10px 24px -4px rgb(0 0 0 / 0.15) !important;
+  white-space: normal;
+  box-sizing: border-box;
+}
+
+.leaflet-tooltip.vector-marker-tooltip .leaflet-tooltip-content {
+  margin: 0;
+  padding: 0;
+  line-height: 1.45;
+  font-size: 0.8125rem;
+  max-width: none;
+  width: 100%;
+  overflow: visible;
+  white-space: normal;
+}
+
+/* Arrow matches solid surface */
+.leaflet-tooltip.vector-marker-tooltip.leaflet-tooltip-top:before {
+  border-top-color: hsl(var(--popover)) !important;
+}
+.leaflet-tooltip.vector-marker-tooltip.leaflet-tooltip-bottom:before {
+  border-bottom-color: hsl(var(--popover)) !important;
+}
+.leaflet-tooltip.vector-marker-tooltip.leaflet-tooltip-left:before {
+  border-left-color: hsl(var(--popover)) !important;
+}
+.leaflet-tooltip.vector-marker-tooltip.leaflet-tooltip-right:before {
+  border-right-color: hsl(var(--popover)) !important;
+}
+
+.vmt {
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.vmt-header {
+  padding: 0.625rem 0.875rem 0.5rem;
+  background-color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.vmt-title {
+  font-weight: 600;
+  font-size: 0.8125rem;
+  letter-spacing: -0.015em;
+  color: var(--foreground);
+  line-height: 1.3;
+}
+
+.vmt-sub {
+  margin-top: 0.2rem;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.vmt-id {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.vmt-body {
+  padding: 0.25rem 0.875rem 0.625rem;
+  overflow: visible;
+  background-color: var(--popover);
+}
+
+.vmt-body--empty {
+  padding-top: 0.5rem;
+  padding-bottom: 0.625rem;
+}
+
+.vmt-empty {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+
+/* Label stacked above value — both wrap freely within the fixed tooltip width */
+.vmt-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.vmt-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.vmt-label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted-foreground);
+  line-height: 1.35;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.vmt-value {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--foreground);
+  text-align: left;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.45;
+  min-width: 0;
+}
+
+.admin-area-tooltip {
+  font-family: var(--chakra-fonts-body);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--chakra-radii-l3);
+  max-width: 14rem;
+}
+
+/* Selected feature: glow to make it obvious */
+.selected-map-feature {
+  filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.6));
+  animation: selected-feature-pulse 2s ease-in-out infinite;
+}
+
+@keyframes selected-feature-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.6));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(6, 182, 212, 0.9));
+  }
+}

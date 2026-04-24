@@ -1,0 +1,9 @@
+/* Fix GeoDjango OSM map widget layout in Unfold admin (issue #779) */
+.dj_map_wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.dj_map {
+    height: 300px;
+}

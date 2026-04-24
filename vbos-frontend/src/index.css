@@ -1,0 +1,759 @@
+/* Design system: Segoe UI Variable (UI + display); Segoe UI Mono / system mono for metrics */
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   Pro UI – Resilience Explorer (Urban Intelligence) reference — screenshot alignment
+   - Sidebar #001b3d, primary #005bb7, accordion bars #003366
+   - Page bg #f5f7fa, notes #fff9e6 / #ffcc00, Inter + system fallbacks
+   - Dark mode: navy-tinted charcoal + lighter blue accents
+   ========================================================================== */
+
+@theme inline {
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --radius-2xl: calc(var(--radius) + 8px);
+    --radius-3xl: calc(var(--radius) + 12px);
+    --radius-4xl: calc(var(--radius) + 16px);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-blue-700: #004a9a; /* Resilience primary (pressed / darker) */
+    --color-surface: var(--surface);
+    --color-surface-foreground: var(--surface-foreground);
+    --color-accent-interactive: var(--accent-interactive);
+    --color-accent-viz: var(--accent-viz);
+}
+
+/* Light mode: Resilience Explorer surfaces + primary action blue */
+:root {
+    --font-sans: "Inter", "Segoe UI Variable", "Segoe UI", ui-sans-serif, system-ui, -apple-system,
+        BlinkMacSystemFont, sans-serif;
+    --font-display: var(--font-sans);
+    --font-mono: "Segoe UI Mono", "Cascadia Mono", Consolas, ui-monospace, monospace;
+    /* Legacy / chart / Leaflet popups */
+    --font-work-sans: var(--font-sans);
+    --chakra-fonts-body: var(--font-sans);
+
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --radius: 0.375rem;
+    /* Resilience Explorer core (screenshot-aligned) */
+    --re-navy: #001b3d;
+    --re-blue: #005bb7;
+    --re-accordion: #003366;
+    --re-bg-app: #f5f7fa;
+    --re-bg-section: #cad6e2;
+    --re-border: #d1d9e0;
+    --re-text: #1a1a1a;
+    --re-text-muted: #5f7d95;
+    --re-note-bg: #fff9e6;
+    --re-note-border: #ffcc00;
+
+    --background: var(--re-bg-app);
+    --foreground: var(--re-text);
+    --card: #ffffff;
+    --card-foreground: var(--re-text);
+    --popover: #ffffff;
+    --popover-foreground: var(--re-text);
+    --primary: var(--re-blue);
+    --primary-foreground: #ffffff;
+    --secondary: #e8edf3;
+    --secondary-foreground: var(--re-text);
+    --muted: #e8edf3;
+    --muted-foreground: var(--re-text-muted);
+    --accent: #dce4ec;
+    --accent-foreground: var(--re-text);
+    --destructive: #c53030;
+    --border: var(--re-border);
+    --input: var(--re-border);
+    --ring: var(--re-blue);
+    --surface: #ffffff;
+    --surface-foreground: var(--re-text);
+    --accent-interactive: var(--re-blue);
+    --accent-viz: var(--re-blue);
+    --chart-1: #005bb7;
+    --chart-2: #00a3a3;
+    --chart-3: #5f7d95;
+    --chart-4: #2e7d32;
+    --chart-5: #ed6c02;
+    --sidebar: #ffffff;
+    --sidebar-foreground: var(--re-text);
+    --sidebar-primary: var(--re-blue);
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #e8edf3;
+    --sidebar-accent-foreground: var(--re-text);
+    --sidebar-border: var(--re-border);
+    --sidebar-ring: var(--re-blue);
+
+    /* DRMIS shell — main content (Command Centre, topbar, cards; toggles with .dark) */
+    --drmis-bg-app: var(--re-bg-app);
+    --drmis-bg-surface: #ffffff;
+    --drmis-bg-elevated: #eef2f6;
+    --drmis-bg-section: var(--re-bg-section);
+    --drmis-bg-note: var(--re-note-bg);
+    --drmis-border-note: var(--re-note-border);
+    /** Section headers matching RE “Scenario controls” / accordion bars */
+    --drmis-accordion-header: var(--re-accordion);
+    --drmis-bg-overlay: rgba(0, 0, 0, 0.04);
+    --drmis-border-default: rgba(13, 43, 69, 0.12);
+    --drmis-border-strong: rgba(13, 43, 69, 0.2);
+    --drmis-text-primary: var(--re-text);
+    --drmis-text-secondary: #4a5568;
+    --drmis-text-muted: var(--re-text-muted);
+    --drmis-text-ghost: #6b7280;
+    /* Amber ~800 — readable on light amber fills (banners, callouts) */
+    --drmis-warning-text: #633806;
+    /* Muted body: ≥4.5:1 on card/amber surfaces */
+    --drmis-text-on-amber: #4a3720;
+    --drmis-track-bg: rgba(0, 0, 0, 0.1);
+    /* Locked elevation + radius (prefer these over one-off shadows in components) */
+    --drmis-shadow-sm: 0 1px 2px rgba(13, 16, 24, 0.06), 0 2px 8px rgba(13, 16, 24, 0.05);
+    --drmis-shadow-md: 0 4px 16px rgba(13, 16, 24, 0.08), 0 2px 6px rgba(13, 16, 24, 0.04);
+    --drmis-radius-card: var(--radius-lg);
+    --drmis-duration-panel: 180ms;
+    --drmis-ease-panel: cubic-bezier(0.4, 0, 0.2, 1);
+    /* DRMIS left nav — Resilience deep navy; active row = light pill + dark text */
+    --drmis-sidebar-bg: var(--re-navy);
+    --drmis-sidebar-border: rgba(255, 255, 255, 0.1);
+    --drmis-sidebar-text-muted: #94b8d4;
+    --drmis-sidebar-text-hover: #c8dae8;
+    --drmis-sidebar-text-active: #001b3d;
+    --drmis-sidebar-hover-bg: rgba(255, 255, 255, 0.08);
+    --drmis-sidebar-active-bg: #e8eef4;
+    --drmis-sidebar-accent: var(--re-blue);
+    --drmis-sidebar-dot-inactive: #4a6d8a;
+}
+
+/* Dark mode: navy-tinted charcoal + Resilience blue accents */
+.dark {
+    --background: #0a1520;
+    --foreground: #e8ecf0;
+    --card: #122536;
+    --card-foreground: #e8ecf0;
+    --popover: #122536;
+    --popover-foreground: #e8ecf0;
+    --primary: #5b9fff;
+    --primary-foreground: #0a1520;
+    --secondary: #1a2f45;
+    --secondary-foreground: #e8ecf0;
+    --muted: #1a2f45;
+    --muted-foreground: #8fb3cc;
+    --accent: #243b52;
+    --accent-foreground: #e8ecf0;
+    --destructive: #f85149;
+    --border: #2a4a5f;
+    --input: #2a4a5f;
+    --ring: #5b9fff;
+    --surface: #122536;
+    --surface-foreground: #e8ecf0;
+    --accent-interactive: #5b9fff;
+    --accent-viz: #5b9fff;
+    --chart-1: #5b9fff;
+    --chart-2: #3fb950;
+    --chart-3: #8fb3cc;
+    --chart-4: #d29922;
+    --chart-5: #f85149;
+    --sidebar: #122536;
+    --sidebar-foreground: #e8ecf0;
+    --sidebar-primary: #5b9fff;
+    --sidebar-primary-foreground: #0a1520;
+    --sidebar-accent: #1a2f45;
+    --sidebar-accent-foreground: #e8ecf0;
+    --sidebar-border: #2a4a5f;
+    --sidebar-ring: #5b9fff;
+
+    --drmis-bg-app: #0a1520;
+    --drmis-bg-surface: #0d1b2a;
+    --drmis-bg-elevated: #132337;
+    --drmis-bg-section: #1a2f45;
+    --drmis-bg-note: rgba(255, 185, 71, 0.12);
+    --drmis-border-note: #ffb347;
+    --drmis-bg-overlay: rgba(255, 255, 255, 0.03);
+    --drmis-border-default: rgba(255, 255, 255, 0.08);
+    --drmis-border-strong: rgba(255, 255, 255, 0.14);
+    --drmis-text-primary: #e8ebf0;
+    --drmis-text-secondary: #8fb3cc;
+    --drmis-text-muted: #6a8aa3;
+    --drmis-text-ghost: #4a6d8a;
+    --drmis-warning-text: #fbbf24;
+    --drmis-text-on-amber: #fde68a;
+    --drmis-track-bg: rgba(255, 255, 255, 0.06);
+    --drmis-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25), 0 2px 12px rgba(0, 0, 0, 0.2);
+    --drmis-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.25);
+    --drmis-radius-card: var(--radius-lg);
+    --drmis-duration-panel: 180ms;
+    --drmis-ease-panel: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@layer base {
+  /* Global reset + enterprise shell defaults */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    margin: 0;
+    padding: 0;
+    background: var(--drmis-bg-app);
+    transition:
+      background-color 0.35s var(--ease-smooth),
+      color 0.35s var(--ease-smooth);
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100dvh;
+    background: var(--drmis-bg-app);
+    color: var(--drmis-text-primary);
+    @apply antialiased;
+    font-family: var(--font-sans);
+  }
+
+  /* React root inherits theme from <html class="dark|light"> — avoids a grey void below the shell */
+  #root {
+    min-height: 100dvh;
+    background: var(--drmis-bg-app);
+    color: var(--drmis-text-primary);
+  }
+}
+
+/* Body / UI text */
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+/* Display / headings (same stack; variable font handles weight) */
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* IDs, dates, metrics — system mono companions to Segoe */
+.font-mono,
+.font-mono-num {
+  font-family: var(--font-mono);
+}
+
+/* Heading hierarchy: bolder in dark, lighter in light */
+.dark h1, .dark h2, .dark h3, .dark h4 {
+  font-weight: 600;
+}
+
+:root:not(.dark) h1, :root:not(.dark) h2, :root:not(.dark) h3, :root:not(.dark) h4 {
+  font-weight: 500;
+}
+
+/* Icons: stroke accent on interactive (hover/focus) */
+.icon-interactive:hover,
+.icon-interactive:focus-visible {
+  color: var(--accent-interactive);
+}
+
+.dark .icon-interactive:hover,
+.dark .icon-interactive:focus-visible {
+  color: var(--ring);
+}
+
+/* CSS containment: isolate layout/paint for cards/panels (performance) */
+.contain-panel {
+  contain: layout style paint;
+}
+
+/* Pro UI: solid surfaces (World Bank / UN style – less glass, more structure) */
+@layer utilities {
+  .glass-surface {
+    background: var(--surface);
+    box-shadow: var(--drmis-shadow-sm);
+    contain: layout style paint;
+  }
+  .dark .glass-surface {
+    box-shadow: var(--drmis-shadow-sm);
+  }
+  .glass-surface-strong {
+    background: var(--surface);
+    box-shadow: var(--drmis-shadow-md);
+    contain: layout style paint;
+  }
+  .dark .glass-surface-strong {
+    box-shadow: var(--drmis-shadow-md);
+  }
+  /** Map + panel enter (keep map canvas free of heavy motion) */
+  .drmis-panel-enter {
+    animation: drmis-panel-enter var(--drmis-duration-panel) var(--drmis-ease-panel) both;
+  }
+  @keyframes drmis-panel-enter {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .drmis-touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  /** Resilience Explorer–style dark blue accordion / scenario bar */
+  .drmis-accordion-strip {
+    background: var(--drmis-accordion-header);
+    color: #ffffff;
+  }
+  .glass-surface-translucent {
+    background: var(--surface);
+    contain: layout style paint;
+  }
+  .glass-pill {
+    background: var(--secondary);
+  }
+  .dark .glass-pill {
+    background: var(--accent);
+  }
+}
+
+:root:not(.dark) .glass-surface-translucent {
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+
+/* Mobile: solid overlay panels */
+@media (max-width: 767px) {
+  .glass-surface-mobile-overlay {
+    background: var(--surface);
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12);
+  }
+  .dark .glass-surface-mobile-overlay {
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* Sidebar scrollbars: thin overlay style */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+.dark .scrollbar-thin {
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+.dark .scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
+.dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Generous whitespace: +20–40% in light mode */
+.spacing-generous {
+  padding: 1.25rem;
+}
+
+:root:not(.dark) .spacing-generous {
+  padding: 1.5rem;
+}
+
+/* Map area: full-bleed + vignette at edges */
+.map-area {
+  position: relative;
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+.map-area .leaflet-container {
+  cursor: crosshair;
+}
+
+/* Vignette overlay: darker at edges (stronger in dark mode) */
+.map-area::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 120px 40px rgba(0, 0, 0, 0.15);
+}
+
+.dark .map-area::after {
+  box-shadow: inset 0 0 160px 60px rgba(0, 0, 0, 0.4);
+}
+
+/* Ambient gradient: subtle institutional blue (dark mode) */
+.dark .ambient-gradient {
+  background: radial-gradient(
+    ellipse 80% 50% at 50% 0%,
+    rgba(0, 91, 183, 0.07) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+/* Light mode: very subtle */
+:root:not(.dark) .ambient-gradient {
+  background: radial-gradient(
+    ellipse 80% 50% at 50% 0%,
+    rgba(0, 91, 183, 0.04) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+/* Theme switch: smooth crossfade (respects prefers-reduced-motion) */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    transition: none;
+  }
+}
+
+/* Hover: scale(1.02–1.04) + glow (stronger in dark) */
+.hover-lift {
+  transition: transform 0.2s var(--ease-spring), box-shadow 0.2s var(--ease-smooth);
+}
+
+.hover-lift:hover {
+  transform: scale(1.03);
+}
+
+.dark .hover-lift:hover {
+  transform: scale(1.04);
+}
+
+/* KPI bento card: neumorphic lift + hover glow */
+.kpi-bento-card {
+  contain: layout style paint;
+  transition: transform 0.2s var(--ease-spring), box-shadow 0.2s var(--ease-smooth);
+}
+
+.kpi-bento-card:hover {
+  transform: scale(1.03);
+}
+
+.dark .kpi-bento-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark .kpi-bento-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+:root:not(.dark) .kpi-bento-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 91, 183, 0.14);
+}
+
+/* Sidebar: width spring animation */
+.sidebar-spring {
+  transition: width 0.45s var(--ease-smooth), opacity 0.3s var(--ease-smooth);
+}
+
+/* Right panel overlay: when expanded, overlays map (map stays fixed) */
+.right-panel-overlay {
+  transition: left 0.45s var(--ease-smooth), width 0.5s var(--ease-smooth);
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hover-lift,
+  .kpi-bento-card,
+  .sidebar-spring,
+  .right-panel-overlay {
+    transition: none;
+  }
+  .hover-lift:hover,
+  .kpi-bento-card:hover {
+    transform: none;
+  }
+}
+
+/* Draggable panel handle */
+.drag-handle {
+  cursor: grab;
+  touch-action: none;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Sparkline path draw animation */
+@keyframes sparkline-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Chart load: staggered reveal */
+@keyframes chart-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Highcharts tooltips use theme from useHighchartsTheme */
+
+.chart-stagger > * {
+  opacity: 0;
+  animation: chart-reveal 0.4s var(--ease-smooth) forwards;
+}
+
+.chart-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.chart-stagger > *:nth-child(2) { animation-delay: 80ms; }
+.chart-stagger > *:nth-child(3) { animation-delay: 160ms; }
+.chart-stagger > *:nth-child(4) { animation-delay: 240ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .chart-stagger > * {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Right Sidebar (Analysis): clean card style */
+.right-sidebar-glass {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  contain: layout style paint;
+}
+
+:root:not(.dark) .right-sidebar-glass {
+  background: #ffffff;
+  border: 1px solid var(--border);
+}
+
+/* Neumorphic slider thumb */
+.slider-neumorphic [data-slot="slider-thumb"] {
+  box-shadow:
+    2px 2px 4px rgba(0, 0, 0, 0.15),
+    -2px -2px 4px rgba(255, 255, 255, 0.08);
+}
+
+.dark .slider-neumorphic [data-slot="slider-thumb"] {
+  box-shadow:
+    3px 3px 6px rgba(0, 0, 0, 0.4),
+    -1px -1px 3px rgba(255, 255, 255, 0.05);
+}
+
+/* Pro UI: solid select triggers (no glass) */
+.glass-select-trigger {
+  background: var(--muted);
+  border-color: var(--border);
+}
+
+:root:not(.dark) .glass-select-trigger {
+  background: var(--muted);
+  border-color: var(--border);
+}
+
+/* Download button: primary institutional style */
+.download-accent-pill {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 600;
+  transition: transform 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
+}
+
+.download-accent-pill:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 91, 183, 0.35);
+}
+
+.dark .download-accent-pill:hover:not(:disabled) {
+  box-shadow: 0 4px 12px rgba(91, 159, 255, 0.3);
+}
+
+/* Lock screen: shake on wrong PIN */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(6px); }
+}
+
+.animate-shake {
+  animation: shake 0.5s var(--ease-smooth);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-shake {
+    animation: none;
+  }
+}
+
+/* Table zebra rows (exclude total row) */
+.table-zebra tbody tr:nth-child(even):not(.total-row) {
+  background: rgba(0, 91, 183, 0.05);
+}
+
+:root:not(.dark) .table-zebra tbody tr:nth-child(even):not(.total-row) {
+  background: rgba(0, 91, 183, 0.06);
+}
+
+/* ==========================================================================
+   Swipe (curtain) comparison – Climate mode
+   Draggable handle to compare Before (2020) vs After (2023) on same map
+   ========================================================================== */
+
+/* Full-screen overlay – leaflet-side-by-side adds to _controlContainer */
+.leaflet-control-container .leaflet-sbs {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
+  pointer-events: none;
+  z-index: 1100;
+}
+
+.leaflet-sbs-range {
+  pointer-events: auto;
+}
+
+/* Prominent vertical divider line */
+.leaflet-sbs-divider {
+  width: 4px;
+  margin-left: -2px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+}
+
+.dark .leaflet-sbs-divider {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Visible draggable handle – no external image */
+.leaflet-sbs-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  background: rgba(255, 255, 255, 0.98);
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-radius: 50%;
+  cursor: ew-resize;
+  pointer-events: auto;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.5);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M8 6h.01M16 6h.01M8 12h.01M16 12h.01M8 18h.01M16 18h.01'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: 20px 20px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.leaflet-sbs-range::-webkit-slider-thumb:hover {
+  transform: scale(1.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.leaflet-sbs-range::-moz-range-thumb {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.98);
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-radius: 50%;
+  cursor: ew-resize;
+  pointer-events: auto;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.2);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M8 6h.01M16 6h.01M8 12h.01M16 12h.01M8 18h.01M16 18h.01'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: 20px 20px;
+}
+
+.leaflet-sbs-range::-moz-range-thumb:hover {
+  transform: scale(1.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Year labels on divider */
+.leaflet-sbs-year-divider {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.7);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
+  z-index: 1001;
+}
+
+.leaflet-sbs-year-divider span {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(6px);
+}

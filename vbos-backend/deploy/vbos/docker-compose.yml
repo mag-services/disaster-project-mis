@@ -1,0 +1,73 @@
+services:
+  vbos-backend:
+    image: ghcr.io/vanuatu-national-statistics-office/vbos-backend:main
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        order: start-first
+        failure_action: rollback
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DJANGO_AWS_ACCESS_KEY_ID=${DJANGO_AWS_ACCESS_KEY_ID}
+      - DJANGO_AWS_SECRET_ACCESS_KEY=${DJANGO_AWS_SECRET_ACCESS_KEY}
+      - DJANGO_AWS_STORAGE_BUCKET_NAME=${DJANGO_AWS_STORAGE_BUCKET_NAME}
+      - DJANGO_DB_URL=${DJANGO_DB_URL}
+      - DJANGO_SETTINGS_MODULE=vbos.config.production
+      - PORT=8000
+    ports:
+      - "8080:8000"
+    ipc: host
+    networks:
+      - caddy
+    labels:
+      caddy: vbos-backend.ds.io
+      caddy.reverse_proxy: "{{upstreams 8000}}"
+      caddy.handle: "/static/*"
+      caddy.handle.root: "* /www/html"
+      caddy.handle.file_server:
+  titiler:
+    image: ghcr.io/developmentseed/vbos-titiler:main
+    container_name: titiler
+    platform: linux/amd64
+    environment:
+      CPL_TMPDIR: /tmp
+      GDAL_CACHEMAX: 75%
+      VSI_CACHE: TRUE
+      VSI_CACHE_SIZE: 1073741824
+      GDAL_DISABLE_READDIR_ON_OPEN: EMPTY_DIR
+      GDAL_HTTP_MERGE_CONSECUTIVE_RANGES: YES
+      GDAL_HTTP_MULTIPLEX: YES
+      GDAL_HTTP_VERSION: 2
+      PYTHONWARNINGS: ignore
+      WEB_CONCURRENCY: 4
+    command:
+      [
+        "uvicorn",
+        "app:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8001",
+        "--workers",
+        "1",
+      ]
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./data:/data # Optional: mount local directory with your raster files
+    restart: unless-stopped
+    networks:
+      - caddy
+    labels:
+      caddy: vbos-titiler.ds.io
+      caddy.reverse_proxy: "{{upstreams 8001}}"
+
+networks:
+  caddy:
+    external: true

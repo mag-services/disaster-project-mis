@@ -1,0 +1,87 @@
+# Example HTTPS config for NDMO production deployment.
+# 1. Copy to nginx-https.conf and replace mis.ndmo.gov.vu with your domain.
+# 2. Obtain certs: certbot certonly --standalone -d mis.ndmo.gov.vu
+# 3. Mount certs in docker-compose: - /etc/letsencrypt:/etc/letsencrypt:ro
+# 4. Expose 443: - "443:443"
+# 5. Set DJANGO_VM_HOST=https://mis.ndmo.gov.vu
+
+# Redirect HTTP to HTTPS
+server {
+    listen 80;
+    server_name mis.ndmo.gov.vu;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name mis.ndmo.gov.vu;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    ssl_certificate /etc/letsencrypt/live/mis.ndmo.gov.vu/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/mis.ndmo.gov.vu/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+
+    # 1. Proxy TiTiler
+    location ^~ /titiler/ {
+        proxy_pass http://titiler:8000/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_connect_timeout 90s;
+        proxy_send_timeout 90s;
+        proxy_read_timeout 90s;
+    }
+
+    # 2. Proxy API and admin to Django
+    location /api/ {
+        proxy_pass http://web:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_buffering off;
+        proxy_request_buffering off;
+    }
+
+    location /admin {
+        return 301 /admin/;
+    }
+
+    location /admin/ {
+        proxy_pass http://web:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /api-token-auth/ {
+        proxy_pass http://web:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # 3. Static/Media
+    location /static/ {
+        alias /static/;
+    }
+
+    location /media/ {
+        proxy_pass http://web:8000;
+        proxy_set_header Host $host;
+    }
+
+    # 4. Frontend SPA
+    location = /index.html {
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        try_files $uri =404;
+    }
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

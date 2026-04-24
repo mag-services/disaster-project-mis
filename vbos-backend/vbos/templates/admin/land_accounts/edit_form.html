@@ -1,0 +1,147 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+{% block title %}{{ title }} | {{ block.super }}{% endblock %}
+{% block extrahead %}
+{{ block.super }}
+<style>
+  .la-tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; }
+  .la-tab { padding: 8px 16px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; cursor: pointer; font-size: 13px; }
+  .la-tab:hover { background: #e9ecef; }
+  .la-tab.active { background: #417690; color: white; border-color: #417690; }
+  .la-panel { display: none; }
+  .la-panel.active { display: block; }
+  .la-section { margin-bottom: 24px; }
+  .la-section h3 { font-size: 14px; margin: 0 0 12px 0; color: #333; }
+  .la-table { border-collapse: collapse; width: 100%; max-width: 800px; font-size: 13px; }
+  .la-table th, .la-table td { border: 1px solid #dee2e6; padding: 6px 10px; text-align: right; }
+  .la-table th { background: #f8f9fa; font-weight: 600; }
+  .la-table th.text-left { text-align: left; }
+  .la-table input { width: 80px; padding: 4px 6px; font-size: 12px; }
+  .la-matrix { font-size: 12px; }
+  .la-matrix input { width: 60px; }
+  .la-actions { margin-top: 24px; padding-top: 16px; border-top: 1px solid #dee2e6; }
+  .la-actions .btn { padding: 10px 20px; font-size: 13px; cursor: pointer; border: none; border-radius: 4px; }
+  .la-actions .btn-primary { background: #417690; color: white; }
+  .la-actions .btn-primary:hover { background: #205067; }
+  .la-help { font-size: 12px; color: #666; margin-bottom: 16px; }
+</style>
+{% endblock %}
+{% block content %}
+<div id="content-main">
+  <p style="margin-bottom: 12px;">
+    <a href="{% url 'admin_land_accounts_list' %}">&larr; {% trans "Back to Land Accounts" %}</a>
+  </p>
+
+  <form method="post" id="land-accounts-form" action="{{ form_action }}">
+    {% csrf_token %}
+    <div class="la-section" style="margin-bottom: 20px;">
+      <label for="id_title" style="display: block; font-weight: 600; margin-bottom: 6px;">{% trans "Title / Year" %}</label>
+      <input type="text" id="id_title" name="title" value="{{ object.title }}" maxlength="100" placeholder="e.g. 2020–2023" style="width: 300px; padding: 6px 10px; font-size: 14px;">
+      <p class="la-help" style="margin-top: 4px; margin-bottom: 0;">{% trans "Short description of this land account period (e.g. 2020–2023)." %}</p>
+    </div>
+    <p class="la-help">
+      {% if simple_mode %}
+        {% trans "Simple mode: enter opening and closing only. The change matrix is computed automatically on save." %}
+        <a href="{% url 'admin_land_accounts_edit' object_id=object.pk %}">{% trans "Switch to full form" %}</a>
+      {% else %}
+        {% trans "Select a province below, edit the values (all in km²). Use 'Calculate' to fill the change matrix from opening/closing." %}
+        <a href="{% url 'admin_land_accounts_edit' object_id=object.pk %}?mode=simple">{% trans "Switch to simple form" %}</a>
+      {% endif %}
+    </p>
+    <div class="la-tabs">
+      {% for prov in provinces %}
+      <button type="button" class="la-tab {% if forloop.first %}active{% endif %}" data-province="{{ prov }}">{{ prov }}</button>
+      {% endfor %}
+    </div>
+
+    {% for prov in provinces %}
+    <div class="la-panel {% if forloop.first %}active{% endif %}" data-province="{{ prov }}">
+      <div class="la-section">
+        <h3>Physical account</h3>
+        <table class="la-table">
+          <thead>
+            <tr>
+              <th class="text-left">Land cover</th>
+              <th>Opening</th>
+              {% if not simple_mode %}
+              <th>Additions</th>
+              <th>Reductions</th>
+              <th>Net change</th>
+              {% endif %}
+              <th>Closing</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in pa_rows %}
+            {% if row.prov == prov %}
+            <tr>
+              <td class="text-left">{{ row.cat }}</td>
+              {% for cell in row.cells %}
+              {% if not simple_mode or "opening" in cell.name or "closing" in cell.name %}
+              <td>
+                <input type="number" step="0.01" name="{{ cell.name }}" value="{{ cell.value }}">
+              </td>
+              {% endif %}
+              {% endfor %}
+            </tr>
+            {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="la-section" {% if simple_mode %}style="display:none;"{% endif %}>
+        <h3>Change matrix (from → to, km²)</h3>
+        <table class="la-table la-matrix">
+          <thead>
+            <tr>
+              <th class="text-left">From \ To</th>
+              {% for to_cat in categories %}
+              <th>{{ to_cat|truncatewords:1 }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in cm_rows %}
+            {% if row.prov == prov %}
+            <tr>
+              <td class="text-left">{{ row.from_cat }}</td>
+              {% for cell in row.cells %}
+              <td>
+                <input type="number" step="0.01" name="{{ cell.name }}" value="{{ cell.value }}">
+              </td>
+              {% endfor %}
+            </tr>
+            {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endfor %}
+
+    <div class="la-actions">
+      {% if not simple_mode %}
+      <button type="submit" name="action" value="calculate" class="btn" style="background:#6c757d;color:white;margin-right:8px;">{% trans "Calculate from opening/closing" %}</button>
+      {% endif %}
+      <button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
+    </div>
+  </form>
+</div>
+
+<script>
+(function() {
+  const tabs = document.querySelectorAll('.la-tab');
+  const panels = document.querySelectorAll('.la-panel');
+  tabs.forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      const prov = this.dataset.province;
+      tabs.forEach(function(t) { t.classList.remove('active'); });
+      panels.forEach(function(p) {
+        p.classList.toggle('active', p.dataset.province === prov);
+      });
+      this.classList.add('active');
+    });
+  });
+})();
+</script>
+{% endblock %}

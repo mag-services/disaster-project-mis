@@ -1,0 +1,10 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+{% block object-tools-items %}
+<li>
+    <a href="{% url 'admin_field_check_dashboard' %}" class="viewsitelink">
+        {% trans "View coverage dashboard" %}
+    </a>
+</li>
+{{ block.super }}
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+{% block title %}{{ title }} | {{ block.super }}{% endblock %}
+{% block extrahead %}
+{{ block.super }}
+<style>
+  .cc-tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; }
+  .cc-tab { padding: 8px 16px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; cursor: pointer; font-size: 13px; }
+  .cc-tab:hover { background: #e9ecef; }
+  .cc-tab.active { background: #417690; color: white; border-color: #417690; }
+  .cc-panel { display: none; }
+  .cc-panel.active { display: block; }
+  .cc-section { margin-bottom: 24px; }
+  .cc-section h3 { font-size: 14px; margin: 0 0 12px 0; color: #333; }
+  .cc-table { border-collapse: collapse; width: 100%; max-width: 800px; font-size: 13px; }
+  .cc-table th, .cc-table td { border: 1px solid #dee2e6; padding: 6px 10px; text-align: right; }
+  .cc-table th { background: #f8f9fa; font-weight: 600; }
+  .cc-table th.text-left { text-align: left; }
+  .cc-table input { width: 80px; padding: 4px 6px; font-size: 12px; }
+  .cc-actions { margin-top: 24px; padding-top: 16px; border-top: 1px solid #dee2e6; }
+  .cc-actions .btn { padding: 10px 20px; font-size: 13px; cursor: pointer; border: none; border-radius: 4px; }
+  .cc-actions .btn-primary { background: #417690; color: white; }
+  .cc-actions .btn-primary:hover { background: #205067; }
+  .cc-help { font-size: 12px; color: #666; margin-bottom: 16px; }
+</style>
+{% endblock %}
+{% block content %}
+<div id="content-main">
+  <p style="margin-bottom: 12px;">
+    <a href="{% url 'admin_coastal_changes_list' %}">&larr; {% trans "Back to Coastal Changes" %}</a>
+  </p>
+
+  <form method="post" id="coastal-changes-form" action="{{ form_action }}">
+    {% csrf_token %}
+    <div class="cc-section" style="margin-bottom: 20px;">
+      <label for="id_title" style="display: block; font-weight: 600; margin-bottom: 6px;">{% trans "Title / Year" %}</label>
+      <input type="text" id="id_title" name="title" value="{{ object.title }}" maxlength="100" placeholder="e.g. 2020–2023" style="width: 300px; padding: 6px 10px; font-size: 14px;">
+      <p class="cc-help" style="margin-top: 4px; margin-bottom: 0;">{% trans "Short description of this coastal change period (e.g. 2020–2023)." %}</p>
+    </div>
+    <p class="cc-help">
+      {% trans "Shoreline change in meters (positive = accretion, negative = erosion)." %}
+    </p>
+    <div class="cc-tabs">
+      {% for prov in provinces %}
+      <button type="button" class="cc-tab {% if forloop.first %}active{% endif %}" data-province="{{ prov }}">{{ prov }}</button>
+      {% endfor %}
+    </div>
+
+    {% for prov in provinces %}
+    <div class="cc-panel {% if forloop.first %}active{% endif %}" data-province="{{ prov }}">
+      <div class="cc-section">
+        <h3>{% trans "Shoreline change by year (m)" %}</h3>
+        <table class="cc-table">
+          <thead>
+            <tr>
+              <th class="text-left">{% trans "Year" %}</th>
+              {% for yr in years %}
+              <th>{{ yr }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left">{% trans "Change (m)" %}</td>
+              {% for yr in years %}
+              {% for row in rows %}
+              {% if row.prov == prov and row.year == yr %}
+              <td>
+                <input type="number" step="0.01" name="{{ row.name }}" value="{{ row.value }}">
+              </td>
+              {% endif %}
+              {% endfor %}
+              {% endfor %}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endfor %}
+
+    <div class="cc-actions">
+      <button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
+    </div>
+  </form>
+</div>
+
+<script>
+(function() {
+  const tabs = document.querySelectorAll('.cc-tab');
+  const panels = document.querySelectorAll('.cc-panel');
+  tabs.forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      const prov = this.dataset.province;
+      tabs.forEach(function(t) { t.classList.remove('active'); });
+      panels.forEach(function(p) {
+        p.classList.toggle('active', p.dataset.province === prov);
+      });
+      this.classList.add('active');
+    });
+  });
+})();
+</script>
+{% endblock %}

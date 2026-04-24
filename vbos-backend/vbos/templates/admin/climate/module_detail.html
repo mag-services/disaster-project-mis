@@ -1,0 +1,38 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+{% block title %}{{ module_label }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; <a href="{% url 'admin_climate_dashboard' %}">{% trans 'Climate' %}</a>
+  &rsaquo; {{ module_label }}
+</div>
+{% endblock %}
+{% block content %}
+<div id="content-main">
+  <h1 style="margin-bottom: 20px;">{{ module_label }}</h1>
+  <div class="module">
+    <table style="width: 100%;">
+      <caption style="display: none;">{{ module_label }}</caption>
+      <thead>
+        <tr>
+          <th style="text-align: left; padding: 10px 0; border-bottom: 1px solid #ddd;">{% trans "Dataset type" %}</th>
+          <th style="text-align: right; padding: 10px 0; border-bottom: 1px solid #ddd;">{% trans "Actions" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for link in links %}
+        <tr>
+          <td style="padding: 12px 0; border-bottom: 1px solid #eee;">{{ link.label }}</td>
+          <td style="padding: 12px 0; border-bottom: 1px solid #eee; text-align: right;">
+            <a href="{{ link.add_url }}" class="addlink">+ {% trans "Add" %}</a>
+            &nbsp;|&nbsp;
+            <a href="{{ link.change_url }}" class="changelink">{% trans "Change" %}</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls %}
+{% block object-tools-items %}
+<li class="relative" x-data="{ open: false }">
+    <button type="button" class="bg-primary-600 border border-primary-600 cursor-pointer flex font-medium gap-2 items-center px-3 py-2 rounded-default shadow-xs text-sm text-white hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600"
+            x-on:click="open = !open"
+            x-on:keydown.escape.window="open = false"
+            x-on:click.outside="open = false"
+            aria-haspopup="true"
+            aria-expanded="false">
+        <span class="material-symbols-outlined md-18">add</span>
+        {% trans "Add" %}
+    </button>
+    <div x-show="open"
+         x-transition:enter="transition ease-out duration-100"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-75"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         class="absolute right-0 mt-1 w-48 rounded-default border border-base-200 bg-white py-1 shadow-lg dark:border-base-700 dark:bg-base-900 z-50"
+         style="display: none;">
+        {% url cl.opts|admin_urlname:'add' as add_url %}
+        <a href="{% add_preserved_filters add_url is_popup to_field %}" class="block px-3 py-2 text-sm text-font-default-light hover:bg-base-100 dark:text-font-default-dark dark:hover:bg-base-800">
+            {% blocktranslate with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktranslate %}
+        </a>
+        <a href="{% url opts|admin_urlname:'import_file' %}" class="block px-3 py-2 text-sm text-font-default-light hover:bg-base-100 dark:text-font-default-dark dark:hover:bg-base-800">
+            {% trans "Import File" %}
+        </a>
+    </div>
+</li>
+{% endblock %}

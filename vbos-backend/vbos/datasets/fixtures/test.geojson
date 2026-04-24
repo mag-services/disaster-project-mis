@@ -1,0 +1,109 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Area 1",
+        "PID": 2,
+        "part": null,
+        "key": "",
+        "key_2": "null",
+        "ref": "12NC",
+        "Province": "Torba",
+        "Area Council": "East Gaua",
+        "Attribute": "Schools",
+        "extra": "value"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              167.59888,
+              -16.28524
+            ],
+            [
+              167.59888,
+              -16.35415
+            ],
+            [
+              167.65928,
+              -16.35415
+            ],
+            [
+              167.65928,
+              -16.28524
+            ],
+            [
+              167.59888,
+              -16.28524
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Line 1",
+        "ref": "13NC",
+        "Pname_2": "TAFEA",
+        "AC_NAME": "Futuna",
+        "Type": "Roads"
+    },
+      "geometry": {
+        "coordinates": [
+          [
+            167.471331,
+            -16.249016
+          ],
+          [
+            167.500713,
+            -16.372577
+          ]
+        ],
+        "type": "LineString"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Point 2",
+        "ref": "14NC",
+        "PID": 1,
+        "Pname": "TAFEA",
+        "ACNAME22": "Futuna",
+        "Attribute": "Business",
+        "source": "OpenStreetMap"
+      },
+      "geometry": {
+        "coordinates": [
+          167.72470,
+          -16.39183
+        ],
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          168.329144,
+          -17.523629
+        ]
+      },
+      "properties": {
+        "id": 199163611,
+        "SYSTEM_NAM": "WS_Siviri",
+        "PID": null,
+        "Pname": null,
+        "AC2022": null,
+        "ACNAME22": null,
+        "Area": null,
+        "Area KMsq": null
+      }
+    }
+  ]
+}

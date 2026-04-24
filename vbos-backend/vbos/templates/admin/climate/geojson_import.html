@@ -1,0 +1,10 @@
+{% extends "admin/geojson_import.html" %}
+{% load i18n %}
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; <a href="{% url 'admin_climate_dashboard' %}">{% trans 'Climate' %}</a>
+  &rsaquo; {{ title }}
+</div>
+{% endblock %}

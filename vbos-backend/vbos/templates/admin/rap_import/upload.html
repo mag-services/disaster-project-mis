@@ -1,0 +1,262 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+{% block title %}RAP import upload | {{ site_title|default:_("Django site admin") }}{% endblock %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans "Home" %}</a>
+  &rsaquo; {% trans "RAP import upload" %}
+</div>
+{% endblock %}
+{% block extrahead %}
+{{ block.super }}
+<style>
+  .rap-dropzone {
+    border: 2px dashed #E2E6EE;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    background: #FAFBFC;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .rap-dropzone.dragover {
+    border-color: #FF4B2B;
+    background: #FFF8F7;
+  }
+  .rap-dropzone p { margin: 0.5rem 0 0; color: #9AA5B8; font-size: 0.875rem; font-family: 'Segoe UI Variable', 'Segoe UI', ui-sans-serif, system-ui, sans-serif; }
+  .rap-results { margin-top: 1.5rem; font-family: 'Segoe UI Mono', 'Cascadia Mono', Consolas, ui-monospace, monospace; font-size: 12px; }
+  .rap-results table { width: 100%; border-collapse: collapse; background: #FFFFFF; border: 1px solid #E2E6EE; border-radius: 8px; overflow: hidden; }
+  .rap-results th { background: #F8F9FB; font-size: 8px; letter-spacing: .09em; text-transform: uppercase; color: #B0BAD0; }
+  .rap-results th, .rap-results td { border: 1px solid #F1F3F7; padding: 0.5rem 0.65rem; text-align: left; color: #0D1018; }
+  .rap-ok { color: #27500A; background: #EAF6EE; padding: 1px 6px; border-radius: 3px; border: 1px solid #9FE1CB; font-size: 10px; }
+  .rap-err { color: #A32D2D; background: #FEECEA; padding: 1px 6px; border-radius: 3px; border: 1px solid #F7C1C1; font-size: 10px; }
+  .rap-banner { padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem; font-size: 12px; }
+  .rap-banner.error { background: #FEECEA; border: 1px solid #F7C1C1; color: #A32D2D; }
+  .rap-banner.success { background: #EAF6EE; border: 1px solid #9FE1CB; color: #27500A; }
+  .rap-sector-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 0.5rem; }
+  @media (max-width: 900px) { .rap-sector-grid { grid-template-columns: repeat(2, 1fr); } }
+  .rap-sector-pill { font-family: 'Segoe UI Mono', 'Cascadia Mono', Consolas, ui-monospace, monospace; font-size: 10px; padding: 4px 8px; border-radius: 4px; border: 1px solid #E2E6EE; }
+  .rap-sector-pill.ok { background: #EAF6EE; border-color: #9FE1CB; color: #27500A; }
+  .rap-sector-pill.warn { background: #FDF3E0; border-color: #F5C875; color: #633806; }
+  .rap-sector-pill.miss { background: #F8F9FB; color: #9AA5B8; border-color: #E2E6EE; }
+</style>
+{% endblock %}
+{% block content %}
+<div id="content-main">
+  <h1 style="font-family:'Segoe UI Variable','Segoe UI',ui-sans-serif,system-ui,sans-serif;font-weight:700;font-size:20px;color:#0D1018;">{% trans "RAP batch upload" %}</h1>
+  <p class="help" style="color:#4A5568;font-family:'Segoe UI Variable', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;font-size:13px;">
+    {% trans "Upload all CSV files from one RAP export in a single batch. Filenames must match RAP conventions (e.g. ex_hazard_…, education_…)." %}
+  </p>
+
+  <form id="rap-upload-form" method="post" enctype="multipart/form-data" action="{{ request.path }}" class="module aligned">
+    {% csrf_token %}
+
+    <div style="background:#FFFFFF;border:1px solid #E2E6EE;border-radius:8px;padding:16px;margin-bottom:14px;">
+      <div style="font-family:'Segoe UI Mono','Cascadia Mono',Consolas,ui-monospace,monospace;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#9AA5B8;margin-bottom:12px;">{% trans "Batch Details" %}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 120px;gap:10px;">
+        <div>
+          <label for="id_batch_ref" style="font-family:'Segoe UI Mono','Cascadia Mono',Consolas,ui-monospace,monospace;font-size:10px;color:#9AA5B8;display:block;margin-bottom:4px;">{% trans "Batch Reference" %} <span class="required">*</span></label>
+          <input type="text" name="batch_ref" id="id_batch_ref" required maxlength="50" placeholder="TC-HAROLD-2026"
+            class="vTextField" style="width:100%;background:#F8F9FB;border:1px solid #E2E6EE;border-radius:5px;padding:7px 10px;font-size:12px;color:#0D1018;font-family:'Segoe UI Variable', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;" />
+        </div>
+        <div>
+          <label for="id_cyclone_name" style="font-family:'Segoe UI Mono','Cascadia Mono',Consolas,ui-monospace,monospace;font-size:10px;color:#9AA5B8;display:block;margin-bottom:4px;">{% trans "Cyclone name" %} <span class="required">*</span></label>
+          <input type="text" name="cyclone_name" id="id_cyclone_name" required maxlength="100" placeholder="TC Harold"
+            class="vTextField" style="width:100%;background:#F8F9FB;border:1px solid #E2E6EE;border-radius:5px;padding:7px 10px;font-size:12px;color:#0D1018;font-family:'Segoe UI Variable', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;" />
+        </div>
+        <div>
+          <label for="id_event_year" style="font-family:'Segoe UI Mono','Cascadia Mono',Consolas,ui-monospace,monospace;font-size:10px;color:#9AA5B8;display:block;margin-bottom:4px;">{% trans "Year" %} <span class="required">*</span></label>
+          <input type="text" name="event_year" id="id_event_year" required inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="2026"
+            class="vTextField" style="width:100%;background:#F8F9FB;border:1px solid #E2E6EE;border-radius:5px;padding:7px 10px;font-size:12px;color:#0D1018;font-family:'Segoe UI Variable', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;" />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <input type="file" name="csv_files" id="id_csv_files" accept=".csv,text/csv" multiple hidden />
+      <div id="rap-dropzone" class="rap-dropzone" tabindex="0" role="button" aria-label="{% trans 'Drop CSV files here or click to browse' %}">
+        <div style="font-size:13px;color:#4A5568;margin-bottom:6px;font-family:'Segoe UI Variable', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;">
+          <strong>{% trans "Drop RAP CSV files here" %}</strong>
+        </div>
+        <div style="font-family:'Segoe UI Mono','Cascadia Mono',Consolas,ui-monospace,monospace;font-size:10px;color:#B0BAD0;">
+          Education_* · Energy_* · FoodSecurity_* · Health_* · WASH_* · Hazard · …
+        </div>
+        <button type="button" onclick="document.getElementById('id_csv_files').click()"
+          style="margin-top:12px;background:#FFFFFF;border:1px solid #E2E6EE;border-radius:6px;padding:7px 16px;font-size:12px;color:#6B7A99;cursor:pointer;font-family:'Segoe UI Variable', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;">
+          {% trans "Browse files" %}
+        </button>
+        <p>{% trans "or click the zone — multiple files allowed" %}</p>
+      </div>
+    </div>
+
+    <div class="submit-row">
+      <button type="submit" class="default" id="rap-submit" style="background:#FF4B2B;border:none;border-radius:6px;padding:8px 20px;font-size:13px;color:#fff;font-family:'Segoe UI Variable', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;font-weight:500;">
+        {% trans "Upload & validate" %}
+      </button>
+    </div>
+  </form>
+
+  <div id="rap-message" style="display:none"></div>
+  <div id="rap-results" class="rap-results" style="display:none"></div>
+
+  <div id="rap-sector-wrap" style="display:none;margin-top:1.25rem;">
+    <div style="background:#FFFFFF;border:1px solid #E2E6EE;border-radius:8px;padding:14px;margin-bottom:14px;">
+      <div style="font-family:'Segoe UI Mono','Cascadia Mono',Consolas,ui-monospace,monospace;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#9AA5B8;margin-bottom:10px;">{% trans "Sector Coverage" %}</div>
+      <div id="rap-sector-grid" class="rap-sector-grid" aria-live="polite"></div>
+    </div>
+    <p style="margin-top:1rem;">
+      <a href="#" id="rap-proceed" class="button" style="opacity:0.45;pointer-events:none;display:inline-block;padding:8px 14px;border-radius:6px;border:1px solid #E2E6EE;text-decoration:none;font-weight:600;background:#FFFFFF;color:#6B7A99;">{% trans "Proceed to batch" %}</a>
+    </p>
+  </div>
+</div>
+
+<script>
+(function() {
+  var form = document.getElementById('rap-upload-form');
+  var fileInput = document.getElementById('id_csv_files');
+  var dropzone = document.getElementById('rap-dropzone');
+  var messageEl = document.getElementById('rap-message');
+  var resultsEl = document.getElementById('rap-results');
+  var submitBtn = document.getElementById('rap-submit');
+  var sectorWrap = document.getElementById('rap-sector-wrap');
+  var sectorGrid = document.getElementById('rap-sector-grid');
+  var proceedBtn = document.getElementById('rap-proceed');
+
+  var RAP_SECTORS = [
+    { id: 'education', label: 'Education' },
+    { id: 'energy', label: 'Energy' },
+    { id: 'food_security', label: 'Food Security' },
+    { id: 'gender_protection', label: 'Gender & Prot.' },
+    { id: 'health', label: 'Health' },
+    { id: 'logistics', label: 'Logistics' },
+    { id: 'shelter', label: 'Shelter' },
+    { id: 'telecom', label: 'Telecom' },
+    { id: 'wash', label: 'WASH' },
+    { id: 'qc', label: 'QC' },
+    { id: 'hazard', label: 'Hazard' }
+  ];
+
+  function renderSectorChecklist(files, batchUrl) {
+    if (!sectorGrid || !sectorWrap) return;
+    var bySector = {};
+    (files || []).forEach(function(f) {
+      if (!f.sector || f.sector === 'unknown') return;
+      var prev = bySector[f.sector];
+      if (!prev) bySector[f.sector] = { valid: f.valid, any: true };
+      else {
+        prev.any = true;
+        prev.valid = prev.valid && f.valid;
+      }
+    });
+    sectorGrid.innerHTML = RAP_SECTORS.map(function(s) {
+      var st = bySector[s.id];
+      var cls = 'miss';
+      var mark = '✗';
+      if (st) {
+        cls = st.valid ? 'ok' : 'warn';
+        mark = st.valid ? '✓' : '!';
+      }
+      return '<span class="rap-sector-pill ' + cls + '">' + mark + ' ' + s.label + '</span>';
+    }).join('');
+    sectorWrap.style.display = 'block';
+    var allOk = (files || []).length > 0 && files.every(function(f) { return f.valid; });
+    if (allOk && batchUrl) {
+      proceedBtn.href = batchUrl;
+      proceedBtn.style.opacity = '1';
+      proceedBtn.style.pointerEvents = 'auto';
+    } else {
+      proceedBtn.href = '#';
+      proceedBtn.style.opacity = '0.45';
+      proceedBtn.style.pointerEvents = 'none';
+    }
+  }
+
+  function getCookie(name) {
+    var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return v ? decodeURIComponent(v[2]) : null;
+  }
+  function csrfToken() {
+    var inp = form.querySelector('[name=csrfmiddlewaretoken]');
+    return inp ? inp.value : getCookie('csrftoken');
+  }
+
+  dropzone.addEventListener('click', function(e) {
+    if (e.target.tagName !== 'BUTTON') fileInput.click();
+  });
+  dropzone.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+  });
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(function(ev) {
+    dropzone.addEventListener(ev, function(e) { e.preventDefault(); e.stopPropagation(); }, false);
+  });
+  dropzone.addEventListener('dragover', function() { dropzone.classList.add('dragover'); });
+  dropzone.addEventListener('dragleave', function() { dropzone.classList.remove('dragover'); });
+  dropzone.addEventListener('drop', function(e) {
+    dropzone.classList.remove('dragover');
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+      fileInput.files = e.dataTransfer.files;
+    }
+  });
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    messageEl.style.display = 'none';
+    resultsEl.style.display = 'none';
+    resultsEl.innerHTML = '';
+    if (sectorWrap) sectorWrap.style.display = 'none';
+
+    if (!fileInput.files || !fileInput.files.length) {
+      messageEl.className = 'rap-banner error';
+      messageEl.textContent = '{% trans "Please choose at least one CSV file." %}';
+      messageEl.style.display = 'block';
+      return;
+    }
+    var fd = new FormData(form);
+
+    submitBtn.disabled = true;
+    fetch(form.action || window.location.pathname, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': csrfToken(), 'X-Requested-With': 'XMLHttpRequest' },
+      body: fd,
+      credentials: 'same-origin'
+    }).then(function(r) { return r.json().then(function(data) { return { ok: r.ok, status: r.status, data: data }; }); })
+    .then(function(res) {
+      submitBtn.disabled = false;
+      var d = res.data;
+      if (!res.ok || !d.ok) {
+        var errs = d.detail;
+        if (!errs && d.errors) {
+          if (d.errors.join) errs = d.errors.join(' ');
+          else if (d.errors.non_field_errors && d.errors.non_field_errors.join) {
+            errs = d.errors.non_field_errors.join(' ');
+          } else errs = JSON.stringify(d.errors);
+        }
+        if (!errs) errs = String(res.status);
+        messageEl.className = 'rap-banner error';
+        messageEl.textContent = errs || '{% trans "Upload failed." %}';
+        messageEl.style.display = 'block';
+        return;
+      }
+      messageEl.className = 'rap-banner success';
+      messageEl.innerHTML = '{% trans "Batch saved." %} <a href="' + (d.batch_url || '#') + '" style="color:#378ADD;">{% trans "Open batch in admin" %}</a>';
+      messageEl.style.display = 'block';
+      if (d.files && d.files.length) {
+        var rows = d.files.map(function(f) {
+          var ok = f.valid ? '<span class="rap-ok">OK</span>' : '<span class="rap-err">ERR</span>';
+          var errList = (f.errors || []).concat(f.warnings || []).join('; ');
+          return '<tr><td>' + (f.filename || '') + '</td><td>' + (f.sector || '') + '</td><td>' + ok + '</td><td>' + (f.rows != null ? f.rows : '') + '</td><td>' + errList + '</td></tr>';
+        }).join('');
+        resultsEl.innerHTML = '<table><thead><tr><th>File</th><th>Sector</th><th>Valid</th><th>Rows</th><th>Notes</th></tr></thead><tbody>' + rows + '</tbody></table>';
+        resultsEl.style.display = 'block';
+        renderSectorChecklist(d.files, d.batch_url || '');
+      }
+    }).catch(function() {
+      submitBtn.disabled = false;
+      messageEl.className = 'rap-banner error';
+      messageEl.textContent = '{% trans "Network error." %}';
+      messageEl.style.display = 'block';
+    });
+  });
+})();
+</script>
+{% endblock %}

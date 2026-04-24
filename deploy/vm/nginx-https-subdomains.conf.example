@@ -1,0 +1,88 @@
+# Example HTTPS config for subdomain-based deployment (recommended by Development Seed).
+# NDMO domains: drmis.ndmo.gov.vu, api.drmis.ndmo.gov.vu, titiler.drmis.ndmo.gov.vu
+#
+# 1. Obtain certs for all three:
+#    certbot certonly --standalone -d drmis.ndmo.gov.vu -d api.drmis.ndmo.gov.vu -d titiler.drmis.ndmo.gov.vu
+# 2. Copy to nginx-https.conf and replace domain names if different.
+# 3. Mount certs: - /etc/letsencrypt:/etc/letsencrypt:ro
+# 4. Frontend build: VITE_API_HOST=https://api.drmis.ndmo.gov.vu VITE_TITILER_API=https://titiler.drmis.ndmo.gov.vu
+
+# Redirect HTTP to HTTPS
+server {
+    listen 80;
+    server_name drmis.ndmo.gov.vu api.drmis.ndmo.gov.vu titiler.drmis.ndmo.gov.vu;
+    return 301 https://$host$request_uri;
+}
+
+# Frontend – drmis.ndmo.gov.vu
+server {
+    listen 443 ssl http2;
+    server_name drmis.ndmo.gov.vu;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    ssl_certificate /etc/letsencrypt/live/drmis.ndmo.gov.vu/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/drmis.ndmo.gov.vu/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+
+    location = /index.html {
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        try_files $uri =404;
+    }
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+
+# API – api.drmis.ndmo.gov.vu
+server {
+    listen 443 ssl http2;
+    server_name api.drmis.ndmo.gov.vu;
+
+    ssl_certificate /etc/letsencrypt/live/drmis.ndmo.gov.vu/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/drmis.ndmo.gov.vu/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+
+    location /static/ {
+        alias /static/;
+    }
+
+    location /media/ {
+        proxy_pass http://web:8000;
+        proxy_set_header Host $host;
+    }
+
+    location / {
+        proxy_pass http://web:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_buffering off;
+        proxy_request_buffering off;
+    }
+}
+
+# TiTiler – titiler.drmis.ndmo.gov.vu
+server {
+    listen 443 ssl http2;
+    server_name titiler.drmis.ndmo.gov.vu;
+
+    ssl_certificate /etc/letsencrypt/live/drmis.ndmo.gov.vu/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/drmis.ndmo.gov.vu/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+
+    location / {
+        proxy_pass http://titiler:8000/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_connect_timeout 90s;
+        proxy_send_timeout 90s;
+        proxy_read_timeout 90s;
+    }
+}

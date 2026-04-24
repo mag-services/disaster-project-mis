@@ -1,0 +1,538 @@
+---
+title: "DRMIS User Manual"
+subtitle: "Disaster Risk Management Information System — End-user guide"
+author: "NDMO / DRMIS"
+date: last-modified
+format:
+  html:
+    embed-resources: true
+    toc: true
+    toc-depth: 4
+    toc-location: left
+    theme: cosmo
+    number-sections: true
+    link-external-newwindow: true
+    include-in-header:
+      - text: |
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+          <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+          <style type="text/css">
+          /* Typography — Inter (Google Fonts); overrides Bootstrap/cosmo defaults */
+          body,
+          .navbar,
+          .sidebar,
+          #quarto-sidebar,
+          .quarto-title-banner,
+          .quarto-title-meta,
+          .breadcrumb,
+          .footnotes,
+          figcaption,
+          .callout,
+          .column-margin,
+          .margin-caption,
+          table,
+          .table,
+          td,
+          th {
+            font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif !important;
+          }
+          h1, h2, h3, h4, h5, h6,
+          .quarto-title-banner .quarto-title .title,
+          .sidebar-title,
+          .sidebar-item a {
+            font-family: "Inter", system-ui, sans-serif !important;
+          }
+          code, kbd, pre, samp,
+          .sourceCode,
+          .code-copy-button {
+            font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace !important;
+          }
+          /* Screenshot placeholder slots */
+          .screenshot-slot {
+            border: 2px dashed #94a3b8;
+            border-radius: 0.5rem;
+            min-height: 14rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.25rem 1.5rem;
+            margin: 1.25rem 0;
+            background: #f1f5f9;
+          }
+          .screenshot-slot-inner {
+            max-width: 36rem;
+            text-align: center;
+            color: #334155;
+            font-size: 0.95rem;
+            line-height: 1.5;
+          }
+          .screenshot-slot-inner code {
+            font-size: 0.85em;
+            background: #e2e8f0;
+            padding: 0.15em 0.4em;
+            border-radius: 0.25rem;
+          }
+          .screenshot-slot-inner strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1.05rem;
+            color: #0f172a;
+          }
+          .screenshot-slot-inner .hint {
+            display: block;
+            margin-top: 0.75rem;
+            font-size: 0.88rem;
+            color: #64748b;
+            font-style: italic;
+          }
+          </style>
+---
+
+## About this manual {.unnumbered}
+
+This document explains how to use the **DRMIS** web application (Disaster Risk Management Information System) for Vanuatu. It is written for **duty officers, analysts, field staff, and administrators** who work with hazard, exposure, and climate information.
+
+**Typography:** This manual uses **Inter** from [Google Fonts](https://fonts.google.com/specimen/Inter) (loaded when you view or build the HTML; an internet connection is required the first time the font is fetched unless the browser has it cached).
+
+**Screenshots:** Figures marked with a **dashed box** are *placeholder slots* — add the listed file under `docs/screenshots/` and optionally replace the slot with a normal image in the source file (`user-manual.qmd`). Existing captures are shown where files are already present.
+
+```{=html}
+<p style="font-size:0.9rem;color:#64748b;margin-top:-0.5rem;">Build HTML from this file: <code>quarto render docs/user-manual.qmd</code> — see <code>docs/README-user-manual.md</code>.</p>
+```
+
+---
+
+# Part I — Getting started
+
+## Introduction
+
+DRMIS helps you to:
+
+- Monitor **live hazard alerts** and operational indicators in the **Command Centre**.
+- Explore **geospatial datasets** (tabular, vector, raster) on the **Live Map**.
+- **Filter** by province, area council, year, and scenario (disaster damage, resources, financial, climate).
+- **Export** data in common formats (XLSX, GeoJSON, GeoTIFF, and others where configured).
+- Review **audit history** for compliance and handover.
+- Manage **profile and security** in **Settings** (where your role allows).
+
+The application has two main **workspaces**:
+
+| Workspace | When you use it |
+|-----------|-----------------|
+| **Command Centre** | Dashboard, Datasets, Exports, Audit log, Settings — navigated from the left sidebar. |
+| **Operations (Live Map)** | Full-screen map with left/right context panels — opened via **Live map** in the sidebar. |
+
+## Browsers and access
+
+- Use a **current version** of Chrome, Edge, Firefox, or Safari.
+- **JavaScript** must be enabled.
+- You need **network access** to the DRMIS server (or VPN if required by your organisation).
+- For **browser notifications** (optional alerts), allow notifications when the app prompts you.
+
+## Signing in
+
+Access is **not** self-service: your administrator creates your account and credentials.
+
+1. Open the DRMIS URL provided by your organisation.
+2. Enter your **username** and **password**.
+3. Click **Sign in**.
+
+![Sign-in screen with username and password fields](screenshots/01-login_.png){fig-align="center" fig-alt="DRMIS login page"}
+
+::: {.callout-tip}
+## No password reset in the app
+
+If you cannot sign in, contact your **system administrator**. DRMIS does not offer a self-service “forgot password” flow in the user interface.
+:::
+
+---
+
+# Part II — Application layout
+
+## Main navigation (left sidebar)
+
+The sidebar is grouped into **Operations**, **Data**, and **Governance** (labels may vary slightly by build).
+
+| Item | Typical purpose |
+|------|-----------------|
+| **Dashboard** | Command Centre home — KPIs, submissions, alerts. |
+| **Live map** | Interactive map and layer analysis. |
+| **Datasets** | Browse dataset metadata by cluster. |
+| **Exports** | Create and track data export jobs. |
+| **Audit log** | Searchable history of important actions. |
+| **Settings** | Profile, security, appearance (where permitted). |
+
+Staff users may also see a link to **Django Admin** for back-office configuration.
+
+```{=html}
+<div class="screenshot-slot"><div class="screenshot-slot-inner"><strong>Figure — Full shell (Dashboard)</strong><code>docs/screenshots/07-shell-overview.png</code><span class="hint">Capture the full window: DRMIS top bar, left navigation, and Command Centre main content.</span></div></div>
+```
+
+## Top bar (Command Centre)
+
+When you are **not** on the Live Map workspace, the shell **top bar** usually includes:
+
+- **DRMIS** branding and short system subtitle.
+- **System status** indicator.
+- **Alert count** (bell) — opens or reflects live alert activity.
+- **Theme** toggle (light / dark).
+- **Account** menu (avatar): user manual link, data entry (if allowed), share (copy link), lock screen (if PIN enabled), Django Admin (staff), **Logout**.
+
+## Roles and what you can open
+
+DRMIS hides menu items you are not allowed to use. Typical patterns:
+
+| Role | Dashboard | Live map | Datasets | Exports | Audit | Settings | Data Entry (menu) |
+|------|-----------|----------|----------|---------|-------|----------|-------------------|
+| **Admin** | Yes | Yes | Yes | Yes | Yes | Yes | Yes (if enabled) |
+| **Analyst** | Yes | Yes | Yes | Yes | Yes | No | Yes (if enabled) |
+| **Read-only** | Yes | Yes | Yes | Yes | Yes | No | No |
+| **Field officer** | Yes | Yes | No | No | No | No | Yes (if enabled) |
+
+If you open a restricted URL directly, you may see **You don't have permission**.
+
+---
+
+# Part III — Command Centre (Dashboard)
+
+## Overview
+
+After login, the default home is the **Dashboard**. It summarises operational status and recent activity.
+
+![Command Centre dashboard overview](screenshots/02-dashboard_.png){fig-align="center" fig-alt="DRMIS dashboard with KPI cards and tables"}
+
+### Key areas
+
+- **KPI / metric tiles** — e.g. pending submissions, live alerts, field teams, daily updates (exact tiles depend on configuration).
+- **Recent submissions** — tabular list with links for review where implemented.
+- **Live alerts** — consolidated feeds (e.g. USGS, VMGD, GDACS, internal DRMIS alerts). New high-priority alerts may **pulse** the header badge and can trigger **sound** or **browser notifications** if you allowed them.
+- **Risk / exposure** panels — contextual summaries where enabled.
+
+## Creating a new incident
+
+Where **+ New Incident** (or equivalent) is available:
+
+1. Choose **incident type** and **severity**.
+2. Select **province** and optionally **area council**.
+3. Enter **title** and **summary**; attach a **photo** if required.
+4. **Publish** — the incident is stored and appears in operational feeds.
+
+Adapt steps to match the live wizard labels in your deployment.
+
+---
+
+# Part IV — Live Map (Operations workspace)
+
+## Opening the Live Map
+
+1. In the left sidebar, click **Live map**.
+2. The layout switches to a **map-first** view: map stage in the centre, **context panel** on the right, **layer controls** on the left (exact widths depend on screen size).
+
+On **small screens**, side panels may collapse into **icons** or **bottom** controls; tap to open.
+
+## Map toolbar (floating chrome)
+
+Above the map you will typically find:
+
+- **Simulate** — opens the **simulation** workflow (scenario parameters and outputs depend on backend configuration).
+- **Layer / scenario** controls — choose active layers and related options.
+- **Legend** — explains symbols and colours for active layers.
+
+```{=html}
+<div class="screenshot-slot"><div class="screenshot-slot-inner"><strong>Figure — Map floating toolbar</strong><code>docs/screenshots/08-map-floating-toolbar.png</code><span class="hint">Show Simulate, layer chip/dropdown, and Legend in one capture.</span></div></div>
+```
+
+## Scenario modes (header)
+
+On the Live Map, the **header** lets you switch **scenario** views, for example:
+
+- **Disaster** — baseline and disaster overlay views (damage, resources, financial) where configured.
+- **Climate** — climate modules and land-cover style layers.
+- **Compare** — side-by-side comparison of two years on the map.
+
+**Keyboard shortcuts** (when the map view is active and focus is not inside a form field):
+
+| Keys | Action |
+|------|--------|
+| **Alt + D** | Switch toward **Disaster** mode |
+| **Alt + C** | Switch toward **Climate** mode |
+| **Alt + X** | Switch toward **Compare** mode |
+| **Escape** | Close certain overlays (e.g. time-series drawer) when open |
+
+```{=html}
+<div class="screenshot-slot"><div class="screenshot-slot-inner"><strong>Figure — Header scenario tabs</strong><code>docs/screenshots/10-header-mode-tabs.png</code><span class="hint">Capture Disaster / Climate / Compare (and any additional mode tabs visible).</span></div></div>
+```
+
+## Left sidebar — clusters and layers
+
+Datasets are grouped by **cluster** (e.g. Education, Health, Logistics).  
+
+1. Select a **cluster** from the control at the top of the left panel.
+2. **Toggle** datasets to add or remove them from the map.
+3. Only one **tabular** choropleth layer may be active at a time in typical configurations; **vector** and **raster** rules depend on your build.
+
+![Left sidebar showing clusters and layer toggles](screenshots/03-left-sidebar_.png){fig-align="center" fig-alt="Left sidebar with dataset clusters and switches"}
+
+### Layer ordering
+
+Some builds allow **reordering** layers (drag handles) so that symbols draw in the correct order on top of the basemap.
+
+## Right sidebar — area, time, and analysis lens
+
+Use the **right sidebar** to:
+
+- Select **one or more provinces** (multi-select).
+- After provinces are chosen, narrow to **area councils** when available.
+- Pick **year** for tabular data tied to a calendar year.
+- Choose **data view** type for disaster overlays — e.g. **Baseline**, **Damage**, **Resources**, **Financial** (labels match your deployment).
+- Apply **attribute** filters when a tabular layer is active (e.g. filter attributes or text contains).
+
+![Right sidebar with province and analysis controls](screenshots/04-right-sidebar_.png){fig-align="center" fig-alt="Right sidebar filters and statistics"}
+
+### Expanded full-width panel
+
+To focus on charts and tables:
+
+1. Click **expand** in the right sidebar header (icon may look like outward arrows).
+2. The panel grows to use more of the screen (often overlaying the map).
+3. Use **restore** to return to the split layout.
+
+![Right sidebar expanded to full width](screenshots/05-expanded-full%20width-right-sidebar_.png){fig-align="center" fig-alt="Expanded right sidebar covering map area"}
+
+## Ask the map (natural language)
+
+If your organisation enabled the **AI map query** feature:
+
+1. Open **Ask the map** (usually bottom-left on the Live Map).
+2. Type a request in plain language, e.g. *Show schools in Tafea with more than 200 students*.
+3. Press **Apply** (or **Ctrl/Cmd + Enter**).
+4. The system proposes **layers, filters, and areas**; review any **warnings** shown after the run.
+
+The assistant **does not run arbitrary SQL** — it returns a **plan** that the app applies to your existing filters and layers. If the server is not configured with an API key, the feature will show a **not configured** error.
+
+```{=html}
+<div class="screenshot-slot"><div class="screenshot-slot-inner"><strong>Figure — Ask the map panel</strong><code>docs/screenshots/09-map-query-chat.png</code><span class="hint">Show the collapsed and/or expanded chat panel with an example query.</span></div></div>
+```
+
+## Compare mode
+
+In **Compare** mode:
+
+- Adjust **left** and **right years** using controls on the map overlay.
+- Drag the **split** control to see more of one side.
+- Province and layer choices still apply from the sidebars.
+
+```{=html}
+<div class="screenshot-slot"><div class="screenshot-slot-inner"><strong>Figure — Compare split map</strong><code>docs/screenshots/11-compare-split-map.png</code><span class="hint">Two-year split view with legend if possible.</span></div></div>
+```
+
+## Simulation panel
+
+**Simulate** opens a panel where you adjust scenario inputs (hazard type, intensity, assumptions — **as configured**). Use **Run** to refresh outputs and **Reset** to restore defaults.
+
+```{=html}
+<div class="screenshot-slot"><div class="screenshot-slot-inner"><strong>Figure — Simulation panel</strong><code>docs/screenshots/12-simulation-panel.png</code><span class="hint">Simulation open with visible parameters and action buttons.</span></div></div>
+```
+
+## Climate view
+
+In **Climate** mode you may see:
+
+- **Climate modules** in the left stack (e.g. land cover, coastal — depends on data).
+- **Key indicators** or storytelling widgets when a climate layer is active.
+- **Raster / PMTiles** layers for specific products.
+
+Exact names follow your administrator’s configuration.
+
+## Legend
+
+Open the **Legend** from the map toolbar to see:
+
+- Active layer entries and colour scales.
+- Units and labels where provided by metadata.
+
+## Map interaction
+
+- **Pan** by dragging; **zoom** with scroll or **+ / −** controls (if shown).
+- **Click** features on the map to open **pop-ups** where implemented.
+- **3D** mode, if available, is toggled from map controls — performance depends on your device.
+
+## Save and load workspace
+
+Use **Workspace** on the map toolbar (next to the legend) to:
+
+- **Save current layout** — enter a name; your **layers**, **scenario** (Disaster / Climate / Compare, etc.), **cluster**, **province / area council** filters, **year**, **data view** and **climate module** selections, **map position** (center and zoom), **basemap style**, **2D/3D** mode, **compare** years and view, and **tabular** filters (where set) are stored **on the server** under your user account.
+
+- **Load** — pick a saved layout from the list to restore it. DRMIS refetches dataset metadata for the saved cluster when possible.
+
+- **Delete** — remove a saved layout you no longer need. A per-user limit applies (e.g. 30 slots); delete old ones to save new layouts.
+
+Layouts are **private to your login** unless an administrator inspects them in Django Admin.
+
+## Feedback
+
+A **Feedback** control may appear on the map (role and build dependent). Use it to send structured comments to your operations team.
+
+---
+
+# Part V — Datasets browser
+
+The **Datasets** page lists metadata for layers available in DRMIS, organised by **cluster** and **type** (tabular, vector, raster, etc.).
+
+Typical actions:
+
+1. Choose a **cluster** filter.
+2. **Search** or sort the table (if available).
+3. Open **detail** links to read description, source, and update dates.
+
+Administrators may also use **Django Admin** for deep edits.
+
+```{=html}
+<div class="screenshot-slot"><div class="screenshot-slot-inner"><strong>Figure — Datasets page</strong><code>docs/screenshots/13-datasets-page.png</code><span class="hint">Table of datasets with cluster filter and at least one row visible.</span></div></div>
+```
+
+---
+
+# Part VI — Exports
+
+## Export workflow
+
+1. Go to **Exports** in the left sidebar.
+2. Select a **cluster** and the **datasets** you need.
+3. Choose **formats** (e.g. XLSX, GeoJSON, GeoTIFF, VRT, PMTiles — whichever your server exposes).
+4. Start the export and watch **status** in the queue (spinners, success/error, toasts).
+
+Exports honour **scope** rules defined on the server (area, year, etc.) — read on-screen hints.
+
+```{=html}
+<div class="screenshot-slot"><div class="screenshot-slot-inner"><strong>Figure — Exports page</strong><code>docs/screenshots/14-exports-queue.png</code><span class="hint">Show format chips and an example job row or empty queue with call-to-action.</span></div></div>
+```
+
+## Download from the Live Map (quick export)
+
+From the **right sidebar** on the Live Map:
+
+1. Enable the layers you need and set **province / year** filters.
+2. Open **Download Data** (or similarly labelled control).
+3. In the dialog, pick **tabular (XLSX)** or **vector (GeoJSON)** (and raster links if shown).
+
+![Download active datasets dialog](screenshots/06-download-dialog_.png){fig-align="center" width="560" fig-alt="Download dialog listing active datasets and filters"}
+
+::: {.callout-note}
+## Filtered downloads
+
+The download uses **current map filters**. If you restrict to **Shefa** and **2024**, the file should only contain matching rows/features (subject to server rules).
+:::
+
+---
+
+# Part VII — Audit log
+
+1. Open **Audit log** from the sidebar.
+2. **Filter** by action, date range, or free-text search as provided.
+3. Change **page size** if available (e.g. 25 / 50 / 100).
+4. Use **Export CSV** for offline archiving or compliance evidence.
+
+```{=html}
+<div class="screenshot-slot"><div class="screenshot-slot-inner"><strong>Figure — Audit log</strong><code>docs/screenshots/15-audit-log.png</code><span class="hint">Filters + table with at least one example row.</span></div></div>
+```
+
+---
+
+# Part VIII — Settings and account
+
+## Settings page
+
+Users with access open **Settings** from the sidebar. Tabs often include:
+
+- **Profile** — display name, email, avatar.
+- **Security** — password change, two-factor authentication (if enabled), session / lock preferences.
+- **Appearance** — theme options aligned with the shell.
+
+```{=html}
+<div class="screenshot-slot"><div class="screenshot-slot-inner"><strong>Figure — Settings (Profile tab)</strong><code>docs/screenshots/16-settings-profile.png</code><span class="hint">Settings page with sidebar tabs visible.</span></div></div>
+```
+
+## Account menu (top bar)
+
+Click your **avatar** on the shell top bar to access:
+
+- **User manual** (external or hosted copy).
+- **Data Entry** (if your role allows).
+- **Share** — copies the current page URL.
+- **Lock screen** (if you configured a PIN).
+- **Admin** (Django, staff only).
+- **Logout**.
+
+## Data Entry (field workflow)
+
+**Data Entry** opens a dedicated workflow for **area administrators** to submit or correct local data. Fields and validation are defined by your programme. If you do not see Data Entry, your role may not include it.
+
+```{=html}
+<div class="screenshot-slot"><div class="screenshot-slot-inner"><strong>Figure — Data Entry</strong><code>docs/screenshots/17-data-entry.png</code><span class="hint">First step of the data entry flow with clear context.</span></div></div>
+```
+
+---
+
+# Part IX — Reference
+
+## Offline behaviour
+
+If you lose connectivity, an **offline** indicator may appear. Some features require a live API; retry when the network is restored.
+
+## URL and session tips
+
+- Bookmark **Live map** or **Dashboard** only after login if your organisation uses SSO or short-lived sessions.
+- **Deep links** (e.g. `live-map` in the path) may switch workspace automatically when the SPA loads.
+
+## Troubleshooting
+
+| Problem | What to try |
+|---------|-------------|
+| Blank map | Reload; check VPN; confirm backend is up; try another browser. |
+| Layers empty | Select a **cluster**; ensure a layer is **toggled on**; check **year** and **province** filters. |
+| 403 / permission | Your role may not allow the section — contact an admin. |
+| Export stuck | Wait and refresh; if persistent, contact support with job id/time. |
+| Ask the map errors | Organisation may not have configured the AI backend — use manual filters. |
+
+## Glossary
+
+| Term | Meaning |
+|------|---------|
+| **Cluster** | Group of related datasets (e.g. Education, Health). |
+| **Tabular** | Table data joined to admin areas (provinces / area councils) for choropleth maps. |
+| **Vector** | GeoJSON features (points, lines, polygons) on the map. |
+| **Raster** | Grid imagery (e.g. hazard or land cover) often via tiles. |
+| **Baseline** | Non-overlay statistical view for tabular layers. |
+| **Scenario** | Disaster, climate, or compare “lens” for the map header. |
+
+## Quick reference
+
+| Goal | Steps |
+|------|--------|
+| Sign in | Username + password → **Sign in** |
+| Open map | Sidebar → **Live map** |
+| Add layers | Left sidebar → cluster → toggle datasets |
+| Filter area | Right sidebar → **Province** / **Area council** |
+| Filter year | Right sidebar → **Year** |
+| Disaster lens | Header → **Disaster** + **Data view** (damage / resources / financial) |
+| Expand stats | Right sidebar → **Expand** full width |
+| Save / load map layout | Map toolbar → **Workspace** → save or pick a saved layout |
+| Export bulk | **Exports** → select datasets → run |
+| Quick download | Live map → **Download Data** → choose format |
+| Audit | **Audit log** → filter → **Export CSV** |
+| Settings | **Settings** → Profile / Security / Appearance |
+| Sign out | Avatar → **Logout** |
+
+---
+
+# Document control {.unnumbered}
+
+| | |
+|--|--|
+| **Source** | `docs/user-manual.qmd` |
+| **Screenshots** | `docs/screenshots/` — see `docs/screenshots/README.md` |
+| **Build** | `quarto render docs/user-manual.qmd` → `docs/user-manual.html` |
+
+*This manual describes the DRMIS front end as implemented in the open-source tree; your deployment may enable or disable specific modules.*

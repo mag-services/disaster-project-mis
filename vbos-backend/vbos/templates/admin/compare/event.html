@@ -1,0 +1,86 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+{% block title %}{% trans "Compare RAP batches" %} | {{ site_title|default:_("Django site admin") }}{% endblock %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans "Home" %}</a>
+  &rsaquo; {% trans "Compare RAP batches" %}
+</div>
+{% endblock %}
+{% block content %}
+<div id="content-main">
+  <h1 style="font-family:'Segoe UI Variable','Segoe UI',ui-sans-serif,system-ui,sans-serif;font-weight:700;font-size:20px;color:#0D1018;">{% trans "Compare RAP import batches" %}</h1>
+  <p class="help" style="color:#4A5568;font-size:13px;">{% trans "Select two completed imports to compare provinces, sectors, and max intensity." %}</p>
+
+  <form method="get" class="module aligned" style="margin-bottom: 1.5rem;">
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:end;margin-bottom:20px;">
+      <div>
+        <label for="batch_a" style="font-family:'Segoe UI Mono','Cascadia Mono',Consolas,ui-monospace,monospace;font-size:10px;color:#9AA5B8;display:block;margin-bottom:4px;">{% trans "Batch A" %}</label>
+        <select name="batch_a" id="batch_a" style="width:100%;background:#FFFFFF;border:1px solid #E2E6EE;border-radius:6px;padding:8px 12px;font-size:13px;color:#0D1018;font-family:'Segoe UI Variable', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;">
+          <option value="">—</option>
+          {% for b in available_batches %}
+          <option value="{{ b.pk }}" {% if batch_a_id == b.pk|stringformat:"s" %}selected{% endif %}>
+            {{ b.cyclone_name }} {{ b.event_year }} (Cat {{ b.max_intensity|default:"—" }}) — {{ b.batch_ref }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div style="font-family:'Segoe UI Mono','Cascadia Mono',Consolas,ui-monospace,monospace;font-size:11px;color:#9AA5B8;text-align:center;padding-bottom:8px;">vs</div>
+      <div>
+        <label for="batch_b" style="font-family:'Segoe UI Mono','Cascadia Mono',Consolas,ui-monospace,monospace;font-size:10px;color:#9AA5B8;display:block;margin-bottom:4px;">{% trans "Batch B" %}</label>
+        <select name="batch_b" id="batch_b" style="width:100%;background:#FFFFFF;border:1px solid #E2E6EE;border-radius:6px;padding:8px 12px;font-size:13px;color:#0D1018;font-family:'Segoe UI Variable', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;">
+          <option value="">—</option>
+          {% for b in available_batches %}
+          <option value="{{ b.pk }}" {% if batch_b_id == b.pk|stringformat:"s" %}selected{% endif %}>
+            {{ b.cyclone_name }} {{ b.event_year }} (Cat {{ b.max_intensity|default:"—" }}) — {{ b.batch_ref }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div>
+      <button type="submit" class="default" style="background:#FF4B2B;border:none;border-radius:6px;padding:8px 18px;color:#fff;font-weight:500;">{% trans "Compare" %}</button>
+    </div>
+  </form>
+
+  {% if error %}
+  <p class="errornote" style="background:#FEECEA;border:1px solid #F7C1C1;color:#A32D2D;border-radius:6px;padding:10px 14px;">{{ error }}</p>
+  {% endif %}
+
+  {% if batch_a and batch_b and diff %}
+  <div style="display:grid;grid-template-columns:1fr 120px 1fr;gap:12px;margin-bottom:1rem;">
+    <div style="background:#FFFFFF;border:1px solid #E2E6EE;border-radius:8px;padding:16px;border-top:3px solid #FF4B2B;">
+      <h2 style="font-size:14px;margin-bottom:0.5rem;color:#0D1018;font-family:'Segoe UI Variable','Segoe UI',ui-sans-serif,system-ui,sans-serif;font-weight:700;">{{ batch_a.cyclone_name }} ({{ batch_a.event_year }})</h2>
+      <p style="font-family:'Segoe UI Mono','Cascadia Mono',Consolas,ui-monospace,monospace;font-size:11px;color:#9AA5B8;">{{ batch_a.batch_ref }}</p>
+      <p style="color:#4A5568;font-size:13px;">{% trans "Max intensity" %}: <strong style="color:#0D1018;">{{ batch_a.max_intensity|default:"—" }}</strong></p>
+      <p style="font-size:12px;color:#4A5568;">{% trans "Sectors" %}: {{ diff.sector_coverage_a|join:", " }}</p>
+    </div>
+    <div style="background:#F8F9FB;border:1px solid #E2E6EE;border-radius:8px;padding:16px;text-align:center;display:flex;flex-direction:column;justify-content:center;">
+      <div style="font-family:'Segoe UI Mono','Cascadia Mono',Consolas,ui-monospace,monospace;font-size:9px;text-transform:uppercase;color:#9AA5B8;letter-spacing:.08em;">{% trans "Delta" %}</div>
+      <div style="font-size:11px;color:#B0BAD0;margin-top:8px;">A ↔ B</div>
+    </div>
+    <div style="background:#FFFFFF;border:1px solid #E2E6EE;border-radius:8px;padding:16px;border-top:3px solid #378ADD;">
+      <h2 style="font-size:14px;margin-bottom:0.5rem;color:#0D1018;font-family:'Segoe UI Variable','Segoe UI',ui-sans-serif,system-ui,sans-serif;font-weight:700;">{{ batch_b.cyclone_name }} ({{ batch_b.event_year }})</h2>
+      <p style="font-family:'Segoe UI Mono','Cascadia Mono',Consolas,ui-monospace,monospace;font-size:11px;color:#9AA5B8;">{{ batch_b.batch_ref }}</p>
+      <p style="color:#4A5568;font-size:13px;">{% trans "Max intensity" %}: <strong style="color:#0D1018;">{{ batch_b.max_intensity|default:"—" }}</strong></p>
+      <p style="font-size:12px;color:#4A5568;">{% trans "Sectors" %}: {{ diff.sector_coverage_b|join:", " }}</p>
+    </div>
+  </div>
+
+  <div class="module" style="background:#FFFFFF;border:1px solid #E2E6EE;border-radius:8px;padding:16px;margin-top:1rem;">
+    <h2 style="font-size:13px;margin-bottom:0.75rem;font-family:'Segoe UI Mono','Cascadia Mono',Consolas,ui-monospace,monospace;text-transform:uppercase;letter-spacing:.06em;color:#9AA5B8;">{% trans "Intensity delta (A − B)" %}</h2>
+    <p style="font-family:'Segoe UI Mono','Cascadia Mono',Consolas,ui-monospace,monospace;color:#0D1018;">{{ diff.intensity_delta }}</p>
+    <h2 style="font-size:13px;margin:1rem 0 0.5rem;font-family:'Segoe UI Mono','Cascadia Mono',Consolas,ui-monospace,monospace;text-transform:uppercase;letter-spacing:.06em;color:#9AA5B8;">{% trans "Shared provinces" %}</h2>
+    <p style="font-size:12px;color:#4A5568;">{% if diff.shared_provinces %}{{ diff.shared_provinces|join:", " }}{% else %}—{% endif %}</p>
+    <h2 style="font-size:13px;margin:1rem 0 0.5rem;font-family:'Segoe UI Mono','Cascadia Mono',Consolas,ui-monospace,monospace;text-transform:uppercase;letter-spacing:.06em;color:#9AA5B8;">{% trans "Only in A" %}</h2>
+    <p style="font-size:12px;color:#4A5568;">{% if diff.a_only_provinces %}{{ diff.a_only_provinces|join:", " }}{% else %}—{% endif %}</p>
+    <h2 style="font-size:13px;margin:1rem 0 0.5rem;font-family:'Segoe UI Mono','Cascadia Mono',Consolas,ui-monospace,monospace;text-transform:uppercase;letter-spacing:.06em;color:#9AA5B8;">{% trans "Only in B" %}</h2>
+    <p style="font-size:12px;color:#4A5568;">{% if diff.b_only_provinces %}{{ diff.b_only_provinces|join:", " }}{% else %}—{% endif %}</p>
+    <h2 style="font-size:13px;margin:1rem 0 0.5rem;font-family:'Segoe UI Mono','Cascadia Mono',Consolas,ui-monospace,monospace;text-transform:uppercase;letter-spacing:.06em;color:#9AA5B8;">{% trans "Sectors in B missing from A" %}</h2>
+    <p style="font-size:12px;color:#4A5568;">{% if diff.missing_in_a %}{{ diff.missing_in_a|join:", " }}{% else %}—{% endif %}</p>
+    <h2 style="font-size:13px;margin:1rem 0 0.5rem;font-family:'Segoe UI Mono','Cascadia Mono',Consolas,ui-monospace,monospace;text-transform:uppercase;letter-spacing:.06em;color:#9AA5B8;">{% trans "Sectors in A missing from B" %}</h2>
+    <p style="font-size:12px;color:#4A5568;">{% if diff.missing_in_b %}{{ diff.missing_in_b|join:", " }}{% else %}—{% endif %}</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

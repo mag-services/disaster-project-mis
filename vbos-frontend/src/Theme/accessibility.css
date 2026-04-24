@@ -1,0 +1,28 @@
+/**
+ * Focus, contrast, and touch — complements index.css tokens.
+ */
+:root {
+  --drmis-focus-ring: 2px solid var(--ring);
+  --drmis-focus-offset: 2px;
+}
+
+/* Visible focus for keyboard users (skip mouse-only clicks) */
+:focus-visible {
+  outline: var(--drmis-focus-ring);
+  outline-offset: var(--drmis-focus-offset);
+}
+
+button:focus:not(:focus-visible),
+[role="button"]:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Leaflet zoom: larger hit targets on small screens only */
+@media (max-width: 767px) {
+  .leaflet-control-zoom a {
+    width: 44px !important;
+    height: 44px !important;
+    line-height: 42px !important;
+    font-size: 1.25rem !important;
+  }
+}

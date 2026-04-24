@@ -1,0 +1,99 @@
+# VM deployment - backend + titiler + nginx (frontend static)
+# Titiler is in "raster" profile - omit if ghcr.io unreachable (run without raster support)
+# Prerequisites:
+#   1. Create vbos-backend/.env with DJANGO_SECRET_KEY (or export it)
+#   2. Build frontend: cd vbos-frontend && pnpm build (with .env.production.local)
+# Run from project root: docker compose -f deploy/vm/docker-compose.yml up -d
+
+services:
+  postgres:
+    image: postgis/postgis:17-3.5
+    platform: linux/x86_64
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: vbos
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  web:
+    build:
+      context: ../../vbos-backend
+      dockerfile: Dockerfile
+    env_file:
+      - ../../vbos-backend/.env
+    working_dir: /app
+    environment:
+      TZ: ${TZ:-Pacific/Fiji}
+      DJANGO_CONFIGURATION: Vm
+      # DJANGO_SECRET_KEY comes from env_file (vbos-backend/.env)
+      DJANGO_DB_URL: postgis://postgres:postgres@postgres:5432/vbos
+      DJANGO_DEBUG: "false"
+      PORT: "8000"
+      DJANGO_VM_HOST: ${DJANGO_VM_HOST:-http://10.252.0.158}
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: vbos
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    command: >
+      bash -c "python3 wait_for_postgres.py &&
+               ./manage.py migrate &&
+               ./manage.py collectstatic --noinput &&
+               gunicorn --bind 0.0.0.0:8000 --access-logfile - vbos.wsgi:application"
+    volumes:
+      # Source mount removed for production – code comes from image (faster)
+      # - ../../vbos-backend:/app
+      - static_volume:/app/staticfiles
+      # Bind-mount media so PMTiles (roads.pmtiles) and uploads are available.
+      # Path is relative to this compose file: deploy/vm/../../vbos-backend/media
+      - ../../vbos-backend/media:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: always
+
+  titiler:
+    build:
+      context: ../../vbos-backend/titiler-local
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    environment:
+      CPL_TMPDIR: /tmp
+      GDAL_CACHEMAX: 75%
+      VSI_CACHE: TRUE
+      VSI_CACHE_SIZE: 1073741824
+      GDAL_DISABLE_READDIR_ON_OPEN: EMPTY_DIR
+      GDAL_HTTP_MERGE_CONSECUTIVE_RANGES: YES
+      GDAL_HTTP_MULTIPLEX: YES
+      GDAL_HTTP_VERSION: 2
+      PYTHONWARNINGS: ignore
+      WEB_CONCURRENCY: 4
+    ports:
+      - "8002:8000"
+    volumes:
+      - ../../vbos-backend/raster_data:/data
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"  # App at http://10.252.0.158/ (use 8080:80 if port 80 is in use)
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ../../vbos-frontend/dist:/usr/share/nginx/html:ro
+      - static_volume:/static:ro
+    depends_on:
+      - web
+    restart: always
+
+volumes:
+  postgres_data:
+  static_volume:

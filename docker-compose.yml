@@ -1,0 +1,4 @@
+# Run from repository root: `docker compose up` (Compose v2.20+ `include`)
+# Or use the canonical stack: `cd vbos-backend && docker compose up`
+include:
+  - path: vbos-backend/docker-compose.yml

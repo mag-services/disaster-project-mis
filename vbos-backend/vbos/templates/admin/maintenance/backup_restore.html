@@ -1,0 +1,157 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; {{ title }}
+</div>
+{% endblock %}
+{% block content %}
+<div id="content-main">
+  <h1 style="margin-bottom: 24px;">{{ title }}</h1>
+
+  <!-- BACKUP CONFIGURATION -->
+  <div class="module" style="margin-bottom: 32px; padding: 24px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px;">
+    <h2 style="margin: 0 0 20px 0; font-size: 1.1em; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">{% trans "BACKUP CONFIGURATION" %}</h2>
+
+    <form method="post" action="{% url 'admin_maintenance_backup' %}" id="backup-form">
+      {% csrf_token %}
+
+      <p style="margin-bottom: 16px;">
+        <label><input type="radio" name="backup_mode" value="full" {% if backup_form.backup_mode.value == "full" or not backup_form.backup_mode.value %}checked{% endif %}>
+          {% trans "Full System Backup (everything – recommended)" %}</label><br>
+        <label><input type="radio" name="backup_mode" value="custom" {% if backup_form.backup_mode.value == "custom" %}checked{% endif %}>
+          {% trans "Custom Backup (select below)" %}</label>
+      </p>
+
+      <div style="margin-bottom: 20px; padding: 16px; background: #fff; border: 1px solid #dee2e6; border-radius: 6px;">
+        <h3 style="margin: 0 0 12px 0; font-size: 1em;">{% trans "What to include" %}</h3>
+        <div id="custom-categories" style="{% if backup_form.backup_mode.value != 'custom' %}display:none;{% endif %}">
+          {% for cat in backup_categories %}
+          <p style="margin: 8px 0;">
+            <label>
+              <input type="checkbox" name="cat_{{ cat.key }}" checked>
+              <strong>{{ cat.label }}</strong>
+            </label>
+            {% if cat.description %}
+            <br><span style="margin-left: 24px; color: #666; font-size: 0.9em;">{{ cat.description }}</span>
+            {% endif %}
+            {% if cat.sub_items %}
+            <ul style="margin: 4px 0 0 24px; color: #555; font-size: 0.9em;">
+              {% for sub in cat.sub_items %}
+              <li>{{ sub }}</li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+          </p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <h3 style="margin: 0 0 12px 0; font-size: 1em;">{% trans "Backup Options" %}</h3>
+        <p style="margin: 8px 0;">
+          <strong>{% trans "Format:" %}</strong> ZIP
+          &nbsp;|&nbsp;
+          <strong>{% trans "Compression:" %}</strong>
+          <select name="compression">
+            <option value="high" {% if backup_form.compression.value == "high" %}selected{% endif %}>{% trans "High (slower)" %}</option>
+            <option value="medium" {% if backup_form.compression.value == "medium" or not backup_form.compression.value %}selected{% endif %}>{% trans "Medium" %}</option>
+            <option value="none" {% if backup_form.compression.value == "none" %}selected{% endif %}>{% trans "None (fastest)" %}</option>
+          </select>
+        </p>
+        <p style="margin: 8px 0; color: #666; font-size: 0.9em;">
+          <strong>{% trans "Encryption:" %}</strong> {% trans "Password protection (AES-256) – coming soon" %}
+        </p>
+        <p style="margin: 8px 0;">
+          <strong>{% trans "Filename:" %}</strong>
+          <input type="text" name="filename" value="{{ backup_form.filename.value|default:default_filename }}" style="width: 320px; padding: 4px 8px;">
+        </p>
+      </div>
+
+      <button type="submit" class="button" style="padding: 12px 24px; background: #417690; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+        {% trans "DOWNLOAD SELECTED BACKUP" %}
+      </button>
+    </form>
+  </div>
+
+  <!-- RESTORE -->
+  <div class="module" style="margin-bottom: 32px; padding: 24px; background: #fff8e6; border: 1px solid #ffd966; border-radius: 8px;">
+    <h2 style="margin: 0 0 20px 0; font-size: 1.1em; border-bottom: 1px solid #ffd966; padding-bottom: 8px;">{% trans "RESTORE" %}</h2>
+    <p style="margin: 0 0 16px 0; color: #856404;">{% trans "Upload a .zip backup file created by this system" %}</p>
+
+    <form method="post" action="{% url 'admin_maintenance_restore' %}" enctype="multipart/form-data" onsubmit="return confirm('{% trans "Restore from backup? This may overwrite existing data." %}');">
+      {% csrf_token %}
+      <p style="margin-bottom: 12px;">
+        <input type="file" name="backup_file" accept=".zip,.json" required>
+      </p>
+      <p style="margin-bottom: 12px;">
+        <input type="password" name="password" placeholder="{% trans 'Password (if encrypted)' %}" style="padding: 6px 10px;">
+      </p>
+      <details style="margin-bottom: 12px;">
+        <summary>{% trans "Advanced Restore Options" %}</summary>
+        <p style="margin: 8px 0;">
+          <label><input type="checkbox" name="dry_run"> {% trans "Dry-run only (preview what will change)" %}</label>
+        </p>
+        <p style="margin: 8px 0;">
+          <label><input type="checkbox" name="overwrite"> {% trans "Overwrite existing records" %}</label>
+        </p>
+        <p style="margin: 8px 0;">
+          <label><input type="checkbox" name="merge"> {% trans "Merge (keep newer versions)" %}</label>
+        </p>
+      </details>
+      <button type="submit" style="padding: 10px 20px; background: #ba8b00; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        {% trans "RESTORE FROM BACKUP" %}
+      </button>
+    </form>
+  </div>
+
+  <!-- BACKUP HISTORY -->
+  <div class="module" style="margin-bottom: 24px; padding: 24px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px;">
+    <h2 style="margin: 0 0 20px 0; font-size: 1.1em; border-bottom: 1px solid #dee2e6; padding-bottom: 8px;">{% trans "BACKUP HISTORY (last 10)" %}</h2>
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th style="border: 1px solid #dee2e6; padding: 8px; text-align: left;">{% trans "Date" %}</th>
+          <th style="border: 1px solid #dee2e6; padding: 8px; text-align: left;">{% trans "Type" %}</th>
+          <th style="border: 1px solid #dee2e6; padding: 8px; text-align: right;">{% trans "Size" %}</th>
+          <th style="border: 1px solid #dee2e6; padding: 8px; text-align: left;">{% trans "Included" %}</th>
+          <th style="border: 1px solid #dee2e6; padding: 8px; text-align: left;">{% trans "Actions" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in backup_history %}
+        <tr>
+          <td style="border: 1px solid #dee2e6; padding: 8px;">{{ log.created_at|date:"Y-m-d H:i" }}</td>
+          <td style="border: 1px solid #dee2e6; padding: 8px;">{{ log.get_backup_type_display }}</td>
+          <td style="border: 1px solid #dee2e6; padding: 8px; text-align: right;">{{ log.size_display }}</td>
+          <td style="border: 1px solid #dee2e6; padding: 8px; font-size: 0.9em;">{{ log.included_categories|join:", "|default:"—" }}</td>
+          <td style="border: 1px solid #dee2e6; padding: 8px;">
+            <a href="{% url 'admin:maintenance_backuplog_changelist' %}">{% trans "View all" %}</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="border: 1px solid #dee2e6; padding: 16px; color: #666;">{% trans "No backups yet." %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <p>
+    <a href="{% url 'admin:index' %}">{% trans "Back to Dashboard" %}</a>
+    &nbsp;|&nbsp;
+    <a href="{% url 'admin:admin_logentry_changelist' %}">{% trans "View Changelog" %}</a>
+  </p>
+</div>
+
+<script>
+document.querySelectorAll('input[name="backup_mode"]').forEach(function(r) {
+  r.addEventListener('change', function() {
+    document.getElementById('custom-categories').style.display = this.value === 'custom' ? 'block' : 'none';
+  });
+});
+</script>
+{% endblock %}

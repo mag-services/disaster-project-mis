@@ -1,0 +1,14 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+{% block title %}{% trans "API Key Created" %} | {{ block.super }}{% endblock %}
+{% block content %}
+<div id="content-main">
+  <h1>{% trans "API Key Created" %}</h1>
+  <p class="errornote">{% trans "Copy this key now. It will not be shown again." %}</p>
+  <p>
+    <input type="text" id="api-key" value="{{ raw_key }}" readonly style="width: 100%; max-width: 500px; font-family: monospace; padding: 8px;" />
+    <button type="button" onclick="navigator.clipboard.writeText(document.getElementById('api-key').value); this.textContent='{% trans "Copied!" %}'; setTimeout(function(){ this.textContent='{% trans "Copy" %}'; }.bind(this), 2000);">{% trans "Copy" %}</button>
+  </p>
+  <p><a href="{% url 'admin:integrations_integrationapikey_changelist' %}">{% trans "Back to API Keys" %}</a></p>
+</div>
+{% endblock %}

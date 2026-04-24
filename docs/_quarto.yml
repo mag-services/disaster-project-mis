@@ -1,0 +1,5 @@
+# Minimal Quarto project for `docs/` — keeps manual + assets in one place.
+# Render:  quarto render docs/user-manual.qmd
+# Or:      cd docs && quarto render user-manual.qmd
+project:
+  type: default

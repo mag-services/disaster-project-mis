@@ -1,0 +1,92 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; <a href="{% url 'admin_climate_dashboard' %}">{% trans 'Climate' %}</a>
+  &rsaquo; {{ title }}
+</div>
+{% endblock %}
+{% block extrahead %}
+{{ block.super }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var datasetMeta = {{ dataset_meta_json|safe }};
+
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'icon-picker-select' && e.data.icon) {
+      var input = document.querySelector('input[name="icon"]');
+      if (input) input.value = e.data.icon;
+      if (Object.prototype.hasOwnProperty.call(e.data, 'color')) {
+        var colorHex = document.querySelector('input.vbos-vector-color-hex[name="color"]')
+          || document.querySelector('input[name="color"]');
+        if (colorHex) {
+          colorHex.value = (e.data.color || '').trim();
+          colorHex.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      }
+    }
+  });
+
+  var datasetSelect = document.querySelector('select[name="dataset"]');
+  var iconInput = document.querySelector('input[name="icon"]');
+  var colorHexInput = document.querySelector('input.vbos-vector-color-hex[name="color"]')
+    || document.querySelector('input[name="color"]');
+  if (datasetSelect && datasetMeta) {
+    datasetSelect.addEventListener('change', function() {
+      var id = this.value;
+      var meta = datasetMeta[id];
+      if (meta) {
+        if (iconInput) iconInput.value = meta.icon || '';
+        if (colorHexInput) {
+          colorHexInput.value = (meta.color || '').trim();
+          colorHexInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      }
+    });
+    if (datasetSelect.value) datasetSelect.dispatchEvent(new Event('change'));
+  }
+});
+</script>
+{% endblock %}
+{% block content %}
+<div id="content-main">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <fieldset class="module aligned">
+            <div class="form-row">
+                {{ form.file.label_tag }}
+                {{ form.file }}
+            </div>
+            <div class="form-row">
+                {{ form.dataset.label_tag }}
+                {{ form.dataset }}
+            </div>
+            <div class="form-row">
+                {{ form.icon.label_tag }}
+                {{ form.icon }}
+                {% if form.icon.help_text %}
+                <p class="help">{{ form.icon.help_text }}</p>
+                {% endif %}
+            </div>
+            <div class="form-row">
+                {{ form.color.label_tag }}
+                {{ form.color }}
+                {% if form.color.help_text %}
+                <p class="help">{{ form.color.help_text }}</p>
+                {% endif %}
+            </div>
+        </fieldset>
+
+        <div class="submit-row">
+            <input type="submit" value="{% trans 'Import File' %}" class="default" />
+        </div>
+    </form>
+
+    {% if form.errors %}
+    <div class="errornote">{% trans "Please correct the errors below." %}</div>
+    {% endif %}
+</div>
+{% endblock %}

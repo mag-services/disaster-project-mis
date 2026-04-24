@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Climate Dashboard — Design Ideas</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 2cm;
+    }
+    body {
+      font-family: "Segoe UI Variable", "Segoe UI", ui-sans-serif, system-ui, -apple-system, sans-serif;
+      line-height: 1.5;
+      color: #1a1a1a;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+      color: #0d9488;
+    }
+    h2 {
+      font-size: 1.25rem;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: #0f766e;
+    }
+    h3 {
+      font-size: 1rem;
+      margin-top: 1rem;
+      margin-bottom: 0.25rem;
+    }
+    p, li {
+      margin-bottom: 0.5rem;
+    }
+    ul {
+      margin-left: 1.25rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+    }
+    th, td {
+      border: 1px solid #e5e7eb;
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+    }
+    th {
+      background: #f0fdfa;
+      font-weight: 600;
+    }
+    .mockup {
+      width: 100%;
+      max-width: 700px;
+      margin: 1.5rem 0;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    .subtitle {
+      color: #6b7280;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+    .page-break { page-break-before: always; }
+    code { background: #f3f4f6; padding: 0.1rem 0.3rem; border-radius: 4px; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+
+<h1>Climate Dashboard — Design Ideas</h1>
+<p class="subtitle">DRMIS — Disaster Risk Management Information System</p>
+
+<h2>Dashboard Mockup</h2>
+<p>Below is a conceptual mockup of the Climate view within the unified DRMIS dashboard for Vanuatu. Disaster and Climate are the same dashboard; the header toggle switches between them. A <strong>dropdown</strong> selects the active climate module — when one is chosen (e.g. Coastal changes), only that module's indicators and maps are displayed; no mixing of content from other modules. Shown with DRMIS header, module dropdown, map, and context panel.</p>
+<img src="climate-dashboard-mockup.png" alt="Climate Dashboard Mockup - UN/World Bank Standards" class="mockup" />
+<p><strong>Sample: Coastal Changes module</strong> — Below is a reference layout showing the module dropdown, map with legend and time slider, and context panel with shoreline charts:</p>
+<img src="climate-dashboard-coastal-sample.png" alt="Coastal Changes module sample layout" class="mockup" />
+
+<h3>DRMIS Header (Current)</h3>
+<p>Disaster and Climate are within the same dashboard. A toggle button in the header switches between the two views — users stay in one unified DRMIS dashboard and switch modes via the toggle. One system logo (DRMIS — blue shield with bars) is used for both; no separate MIS logo.</p>
+<ul>
+  <li><strong>Left:</strong> DRMIS logo (shield icon), "DRMIS" title, "Disaster Risk Management Information System" subtitle</li>
+  <li><strong>Center:</strong> Disaster / Climate toggle button — switches between Disaster view and Climate view within the same dashboard</li>
+  <li><strong>Right:</strong> Theme toggle (light/dark), User avatar (circular icon)</li>
+</ul>
+<p><strong>User avatar dropdown</strong> — When the user clicks the avatar, a dropdown opens with:</p>
+<ul>
+  <li>Username (e.g. "admin")</li>
+  <li>Help</li>
+  <li>Profile & security</li>
+  <li>Share</li>
+  <li>Lock screen (if pin is set)</li>
+  <li>Admin (staff only)</li>
+  <li>Logout (styled in red)</li>
+</ul>
+<p>Logout is already in this dropdown; no separate logout control is needed in the main navigation.</p>
+
+<div class="page-break"></div>
+
+<h2>UN / World Bank Dashboard Standards Applied</h2>
+<p>The design draws on established international practices:</p>
+<ul>
+  <li><strong>World Bank:</strong> Hierarchical structure — overview metrics first, then drill-down by filters (country/region, year, indicator)</li>
+  <li><strong>UN SDG:</strong> Category-based browsing with thematic icons (Land, Water, Ecosystems, Climate)</li>
+  <li><strong>IPCC:</strong> M.A.D.E principle (Message, Audience, Design, Evaluation); clear intent; accessible colors (no rainbow); colorblind-friendly palettes</li>
+  <li><strong>DataBank / Open Data:</strong> Interactive maps, filter panels, embeddable visualizations, mobile-optimized</li>
+</ul>
+
+<h2>1. Climate Dashboard Layout (Visual Structure)</h2>
+<p>Based on the Coastal Changes sample mockup. Disaster and Climate share the same dashboard; the header toggle switches between them.</p>
+
+<h3>1.1 Header Row (fixed, full width)</h3>
+<table>
+  <tr><th>Area</th><th>Content</th></tr>
+  <tr><td>Left</td><td>DRMIS logo, title, subtitle</td></tr>
+  <tr><td>Center</td><td>Disaster / Climate toggle</td></tr>
+  <tr><td>Right</td><td>Module dropdown (Climate mode only), Time range, Location, View mode filters; Theme toggle; User avatar</td></tr>
+</table>
+
+<h3>1.2 Main Content (below header)</h3>
+<table>
+  <tr><th>Zone</th><th>Width</th><th>Content</th></tr>
+  <tr><td>Map area</td><td>~65–70%</td><td>Module title (e.g. "Coastal Changes"); Map with layer dropdown, zoom/pan/search controls; Single legend (bottom-left overlay); Time slider (bottom)</td></tr>
+  <tr><td>Context panel</td><td>~30–35%</td><td>Section title (e.g. "COASTAL ANALYSIS"); Module-specific charts (line, bar); No duplicate legend</td></tr>
+</table>
+
+<h3>1.3 Map Controls (on map overlay)</h3>
+<ul>
+  <li><strong>Top-left:</strong> Layer/data dropdown (e.g. "Historical Shoreline Change (2000–2023)")</li>
+  <li><strong>Left edge:</strong> Zoom in/out, pan, recenter, search</li>
+  <li><strong>Top-right:</strong> Layers, print, full-screen</li>
+  <li><strong>Bottom-left:</strong> Single legend (e.g. Shoreline change: High Erosion, Accretion, Erosion, Stable)</li>
+  <li><strong>Bottom:</strong> Time slider (e.g. 2000–2023)</li>
+</ul>
+
+<h3>1.4 Context Panel (right)</h3>
+<ul>
+  <li><strong>Shared filters:</strong> Time range, Location (Province/Area Council), View mode</li>
+  <li><strong>Module-specific:</strong> Charts only — e.g. Coastal: Annual Shoreline Position (line), Regional Erosion & Accretion (bar)</li>
+  <li><strong>No legend duplication</strong> — legend stays on map</li>
+</ul>
+
+<h2>2. Layout Options (Standards-Aligned)</h2>
+<table>
+  <tr><th>Zone</th><th>Purpose</th></tr>
+  <tr><td>Top row</td><td>Overview KPI cards (optional); Module dropdown; Shared filters</td></tr>
+  <tr><td>Map</td><td>Primary visualization — selected module's layers only; no mixing</td></tr>
+  <tr><td>Context panel</td><td>Filters, charts, drill-down — module-specific; no duplicate legend</td></tr>
+</table>
+<p>Benefits: follows international standards; clear hierarchy; optimized for climate data exploration.</p>
+
+<h2>3. Module Dropdown (One at a Time)</h2>
+<p>Use a <strong>dropdown</strong> to switch between the seven climate modules. Do not display all indicators from all modules at once — when one module is selected, only that module's content is shown:</p>
+<ul>
+  <li>Land Use / Land Cover Classification</li>
+  <li>Coastal changes</li>
+  <li>Assessing Flood Risk from Past Weather</li>
+  <li>Climate indicators</li>
+  <li>Marine heat waves</li>
+  <li>Coral reef mapping</li>
+  <li>Soil health</li>
+</ul>
+<p><strong>Example:</strong> When "Coastal changes" is selected, only coastal-related indicators, maps, and charts are displayed. No mixing with Land Use, Flood Risk, or other modules.</p>
+
+<h2>4. Map and Context Panel (Module-Specific)</h2>
+<ul>
+  <li><strong>Map:</strong> Shows only the selected module's layers (e.g. Coastal changes → coastal erosion/accretion map)</li>
+  <li><strong>Context panel:</strong> KPIs and charts for the selected module only</li>
+  <li><strong>Single legend only:</strong> Do not duplicate legends — use one legend per module, either on the map overlay or in the context panel, not both. Avoid redundant entries (e.g. "High Erosion" or "Stable" appearing twice).</li>
+  <li><strong>No mixing:</strong> Switching between modules replaces all content; no overlap of indicators</li>
+</ul>
+
+<h2>5. Context Panel Content by Module</h2>
+<table>
+  <tr><th>Module</th><th>Right panel content</th></tr>
+  <tr><td>Land Use / Land Cover</td><td>Legend, class breakdown (pie/bar), area stats</td></tr>
+  <tr><td>Coastal changes</td><td>Single legend (shoreline change: High Erosion, Accretion, Erosion, Stable), time slider, shoreline position chart, erosion/accretion stats</td></tr>
+  <tr><td>Flood Risk</td><td>Risk level legend, historical events, probability chart</td></tr>
+  <tr><td>Climate indicators</td><td>Time series, trend charts, anomaly maps</td></tr>
+  <tr><td>Marine heat waves</td><td>Duration/intensity chart, heat map legend</td></tr>
+  <tr><td>Coral reef mapping</td><td>Reef health legend, coverage %, bleaching index</td></tr>
+  <tr><td>Soil health</td><td>Soil type legend, health index, degradation metrics</td></tr>
+</table>
+
+<h2>6. Shared Controls and Filters</h2>
+<p>Reuse existing controls: AreaSelect (province, area council), YearSelect, AttributeFilterSelect, DownloadDataDialog. Add a Time range control for modules that need multi-year or seasonal views.</p>
+
+<h2>7. Real-World Accurate Text</h2>
+<p>All labels, metrics, legends, and dropdowns should use actual real-world accurate text — no placeholders or gibberish. Examples:</p>
+<ul>
+  <li><strong>KPI subtitles:</strong> "Vanuatu national average", "vs. 30-year baseline", "+1.07 mm/yr trend", "per capita 2022"</li>
+  <li><strong>Data types:</strong> "Sea surface temperature", "Climate indicators", "Land use / land cover"</li>
+  <li><strong>Date ranges:</strong> "Last 12 months", "2020–2024", "All data"</li>
+  <li><strong>Legends:</strong> One legend per module — no duplicates on map and panel. Proper units (e.g. °C, mm/yr, tCO2/cap) and valid ranges (e.g. -1.5 to 1.5 °C). Fix typos (e.g. "Erorotion" → "Erosion").</li>
+  <li><strong>Region:</strong> "Vanuatu" (not "Vanuatu rand" or similar)</li>
+</ul>
+
+<h2>8. Visual Hierarchy and Theming</h2>
+<ul>
+  <li>Use a distinct accent for Climate mode (e.g. green/teal) vs Disaster (amber/red)</li>
+  <li>Keep the same glass-style header and sidebar styling</li>
+  <li>Use icons per module (LuTreePine, LuWaves, LuDroplets, LuThermometer, LuFish, LuSprout)</li>
+</ul>
+
+<h2>9. Progressive Rollout</h2>
+<ol>
+  <li><strong>Phase 1:</strong> Enable Climate mode with the full layout (map + sidebars) instead of the placeholder</li>
+  <li><strong>Phase 2:</strong> Add one or two modules first (e.g. LULC + Climate indicators)</li>
+  <li><strong>Phase 3:</strong> Add remaining modules as data and APIs become available</li>
+  <li><strong>Phase 4:</strong> Add further modules as data becomes available</li>
+</ol>
+
+<h2>10. Recommended Architecture</h2>
+<ol>
+  <li>Remove the full-screen placeholder — show the same three-column layout in Climate mode</li>
+  <li>Add <code>ClimateSection</code> — module dropdown; when selected, show only that module's layers and context panel content</li>
+  <li>Use a "Climate" cluster — or a dedicated cluster per module for datasets</li>
+  <li>Extend <code>ContextPanelContent</code> — add climate-specific content based on active module</li>
+  <li>Reuse map components — VectorLayers, PMTilesLayers, TabularLayer for climate layers</li>
+  <li>Add a Climate mode badge — small header badge for quick recognition</li>
+</ol>
+
+<h2>11. Backend: Disaster vs Climate Availability</h2>
+<p>Vector and PMTiles datasets have two checkboxes in the admin:</p>
+<ul>
+  <li><strong>Available in Disaster</strong> — when checked, the dataset appears in Disaster mode</li>
+  <li><strong>Available in Climate</strong> — when checked, the dataset appears in Climate mode</li>
+</ul>
+<p>Both checked = available in both. One only = that mode only. The API filters by <code>scenario</code> (disaster/climate) when returning datasets.</p>
+
+<h2>12. Data Model Considerations</h2>
+<ul>
+  <li><strong>LULC:</strong> Raster or vector, with class codes and labels</li>
+  <li><strong>Coastal / Flood / Marine / Coral:</strong> Raster or vector, possibly PMTiles for large areas</li>
+  <li><strong>Climate indicators:</strong> Time series + optional raster for spatial view</li>
+  <li><strong>Soil health:</strong> Vector or raster with attributes</li>
+</ul>
+
+<h2>Summary</h2>
+<table>
+  <tr><th>Decision</th><th>Recommendation</th></tr>
+  <tr><td>Dashboard</td><td>Single dashboard; Disaster and Climate are two views switched via header toggle</td></tr>
+<tr><td>Layout</td><td>UN/World Bank–style: overview KPIs → map → drill-down; optimized for climate, not tied to Disaster layout</td></tr>
+  <tr><td>Module selector</td><td>Dropdown to switch between modules; one module at a time — content and maps are module-specific, no mixing</td></tr>
+  <tr><td>Map</td><td>Primary visualization; interactive, filterable by province/area/year</td></tr>
+  <tr><td>Context panel</td><td>Filters, legend, charts, KPIs — module-specific content</td></tr>
+  <tr><td>Rollout</td><td>Progressive, module by module</td></tr>
+  <tr><td>Theming</td><td>IPCC-accessible palettes; avoid rainbow; colorblind-friendly</td></tr>
+</table>
+
+</body>
+</html>

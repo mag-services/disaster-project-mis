@@ -1,0 +1,7 @@
+.*
+!.coveragerc
+!.env
+
+# Exclude large data – mounted at runtime
+raster_data
+media

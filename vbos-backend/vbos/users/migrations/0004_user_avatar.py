@@ -1,0 +1,18 @@
+# Add avatar field to User
+
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ("users", "0003_alter_user_first_name"),
+    ]
+
+    operations = [
+        migrations.AddField(
+            model_name="user",
+            name="avatar",
+            field=models.ImageField(blank=True, null=True, upload_to="avatars/"),
+        ),
+    ]

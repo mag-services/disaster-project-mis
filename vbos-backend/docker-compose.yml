@@ -1,0 +1,131 @@
+x-django-environment: &django-environment
+  DJANGO_CONFIGURATION: Local
+  DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+  DJANGO_AWS_ACCESS_KEY_ID: ${DJANGO_AWS_ACCESS_KEY_ID}
+  DJANGO_AWS_SECRET_ACCESS_KEY: ${DJANGO_AWS_SECRET_ACCESS_KEY}
+  DJANGO_AWS_STORAGE_BUCKET_NAME: ${DJANGO_AWS_STORAGE_BUCKET_NAME}
+  POSTGRES_HOST: postgres
+  POSTGRES_DB: vbos
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  REDIS_URL: redis://redis:6379/0
+  # Optional: set DISABLE_2FA_GLOBALLY=true in .env to skip email OTP during local login
+  DISABLE_2FA_GLOBALLY: ${DISABLE_2FA_GLOBALLY:-false}
+
+services:
+  postgres:
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=vbos
+    image: postgis/postgis:17-3.5
+    platform: linux/x86_64
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+  redis:
+    image: redis:7-alpine
+    # No host port: avoid conflict with a local Redis on :6379. Other services use
+    # redis://redis:6379 on the Compose network. To expose on the host, e.g.:
+    # ports: ["127.0.0.1:6380:6379"]
+    restart: always
+
+  # Fake SMTP for OTP / email trials: open http://localhost:8025 (no TLS on :1025)
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    platform: linux/amd64
+    ports:
+      - "1025:1025" # SMTP — use host localhost:1025 from host-run Django; use mailhog:1025 from web container
+      - "8025:8025" # Web UI to read messages
+    restart: unless-stopped
+
+  web:
+    working_dir: /code
+    restart: always
+    environment: *django-environment
+    build: ./
+    command: >
+      bash -c "python3 wait_for_postgres.py &&
+               ./manage.py migrate &&
+               ./manage.py collectstatic --noinput &&
+               ./manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./:/code
+    ports:
+      - "8080:8000"  # 8080 to avoid conflict with VM deploy web (8000)
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      mailhog:
+        condition: service_started
+  celery-worker:
+    working_dir: /code
+    restart: always
+    environment: *django-environment
+    build: ./
+    command: >
+      bash -c "python3 wait_for_postgres.py &&
+               celery -A vbos worker --loglevel=info --concurrency=4"
+    volumes:
+      - ./:/code
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      web:
+        condition: service_started
+  celery-beat:
+    working_dir: /code
+    restart: always
+    environment: *django-environment
+    build: ./
+    command: >
+      bash -c "python3 wait_for_postgres.py &&
+               celery -A vbos beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+    volumes:
+      - ./:/code
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      celery-worker:
+        condition: service_started
+  documentation:
+    restart: always
+    build: ./
+    command: "python3 -m mkdocs serve"
+    volumes:
+      - ./:/code
+    ports:
+      # 8001 often taken (other IDEs/tools); use 8015 for MkDocs
+      - "8015:8015"
+  titiler:
+    build: ./titiler-local
+    platform: linux/amd64
+    environment:
+      WEB_CONCURRENCY: 1
+    ports:
+      # 8002/8003 often taken (VM deploy, other stacks); use 8043 for local Compose
+      - "8043:8000"
+    volumes:
+      - ./raster_data:/data
+    restart: unless-stopped
+
+  frontend:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ../vbos-frontend/dist:/usr/share/nginx/html:ro
+      - ./nginx-frontend.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - web

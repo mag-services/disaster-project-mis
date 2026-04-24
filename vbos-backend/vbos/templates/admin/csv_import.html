@@ -1,0 +1,267 @@
+<!-- templates/admin/csv_import.html - Multi-select CSV import with progress -->
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; <a href="{% url 'admin:datasets_tabularitem_changelist' %}">{% trans 'Tabular items' %}</a>
+  &rsaquo; {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+<div id="content-main">
+    <div id="step-select" class="import-step">
+        <h3>{% trans "Step 1: Select CSV files" %}</h3>
+        <p class="help">{% trans "Select multiple CSV files at once." %}</p>
+        <div id="drop-zone" class="drop-zone" style="border:2px dashed #cbd5e1; border-radius:8px; padding:2.5rem; text-align:center; background:#f8fafc; margin:1rem 0; cursor:pointer; transition:border-color .2s, background .2s;">
+            <p style="margin:0 0 0.75rem; font-size:1rem; color:#475569;">{% trans "Drag and drop CSV files here" %}</p>
+            <p style="margin:0 0 1rem; font-size:0.875rem; color:#94a3b8;">{% trans "or" %}</p>
+            <label for="csv-file-input" class="upload-btn" style="display:inline-block; padding:0.5rem 1.25rem; background:#417690; color:#fff; border-radius:6px; font-weight:500; cursor:pointer; font-size:0.875rem;">{% trans "Browse to upload" %}</label>
+            <input type="file" id="csv-file-input" accept=".csv" multiple style="display:none;">
+        </div>
+    </div>
+
+    <div id="step-mapping" class="import-step" style="display:none;">
+        <h3>{% trans "Step 2: Map files to datasets" %}</h3>
+        <p class="help">{% trans "Each file is auto-matched to a dataset where possible. Adjust if needed." %}</p>
+        <div id="mapping-table-wrap" style="overflow-x:auto; max-height:400px; overflow-y:auto;">
+            <table class="mapping-table" style="width:100%; border-collapse:collapse;">
+                <thead>
+                    <tr style="background:#f0f0f0;">
+                        <th style="padding:8px; text-align:left;">{% trans "File" %}</th>
+                        <th style="padding:8px; text-align:left;">{% trans "Dataset" %}</th>
+                        <th style="width:40px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="mapping-tbody"></tbody>
+            </table>
+        </div>
+        <button type="button" id="clear-files" class="button" style="margin-top:0.5em;">{% trans "Clear all" %}</button>
+    </div>
+
+    <div id="step-options" class="import-step" style="display:none;">
+        <h3>{% trans "Step 3: Import options" %}</h3>
+        <div style="display:flex; gap:2em; flex-wrap:wrap;">
+            <div>
+                <label for="format-style">{% trans "CSV format:" %}</label>
+                <select id="format-style">
+                    <option value="long">{% trans "Long format (Year, Attribute, Value per row)" %}</option>
+                    <option value="wide">{% trans "Wide format (Region per row, metrics as columns)" %}</option>
+                </select>
+                <p class="help">{% trans "Wide format: first column = Region, other columns = attribute names with values" %}</p>
+            </div>
+            <div>
+                <label for="import-year">{% trans "Year (for wide format):" %}</label>
+                <input type="number" id="import-year" value="2024" min="1900" max="2100" style="width:80px;">
+                <p class="help">{% trans "Used when CSV has no Year column (wide format)" %}</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="step-submit" class="import-step" style="display:none; margin-top:1.5em;">
+        <button type="button" id="import-btn" class="default">{% trans "Import Files" %}</button>
+    </div>
+
+    <div id="progress-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:white; padding:2em; border-radius:8px; min-width:320px; text-align:center;">
+            <p id="progress-text">{% trans "Uploading..." %} 0%</p>
+            <div style="height:20px; background:#eee; border-radius:4px; margin-top:1em; overflow:hidden;">
+                <div id="progress-bar" style="height:100%; background:#417690; width:0%; transition:width 0.2s;"></div>
+            </div>
+            <p id="progress-detail" style="margin-top:0.5em; font-size:0.9em; color:#666;"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    const datasets = {{ datasets_json|safe }};
+    const uploadUrl = '{{ upload_url }}';
+
+    function filenameToSearchKey(name) {
+        return name.replace(/\.csv$/i, '').replace(/_/g, ' ').toLowerCase().trim();
+    }
+
+    function datasetNameToSearchKey(str) {
+        return (str || '').toLowerCase().trim();
+    }
+
+    function suggestDataset(filename) {
+        const key = filenameToSearchKey(filename);
+        if (!key) return null;
+        for (const d of datasets) {
+            const dKey = datasetNameToSearchKey(d.name);
+            if (dKey && (dKey.includes(key) || key.includes(dKey))) return d.id;
+        }
+        for (const d of datasets) {
+            const dKey = datasetNameToSearchKey(d.name);
+            if (dKey && dKey.split(/[\s\-_]+/).some(part => part.length > 2 && key.includes(part))) return d.id;
+        }
+        return null;
+    }
+
+    let selectedFiles = [];
+
+    const fileInput = document.getElementById('csv-file-input');
+    const dropZone = document.getElementById('drop-zone');
+    const stepSelect = document.getElementById('step-select');
+    const stepMapping = document.getElementById('step-mapping');
+    const stepOptions = document.getElementById('step-options');
+    const stepSubmit = document.getElementById('step-submit');
+    const tbody = document.getElementById('mapping-tbody');
+    const clearBtn = document.getElementById('clear-files');
+    const importBtn = document.getElementById('import-btn');
+    const progressModal = document.getElementById('progress-modal');
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+    const progressDetail = document.getElementById('progress-detail');
+
+    function handleFiles(files) {
+        const filtered = Array.from(files).filter(f => f.name.toLowerCase().endsWith('.csv'));
+        if (filtered.length === 0 && files.length > 0) {
+            alert('{% trans "Please select CSV files only." %}');
+            return;
+        }
+        selectedFiles = filtered;
+        renderMapping();
+        stepMapping.style.display = 'block';
+        stepOptions.style.display = 'block';
+        stepSubmit.style.display = 'block';
+    }
+
+    fileInput.addEventListener('change', function() {
+        handleFiles(this.files);
+    });
+
+    dropZone.addEventListener('click', function(e) {
+        if (!e.target.closest('label[for="csv-file-input"]')) {
+            fileInput.click();
+        }
+    });
+    dropZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.style.borderColor = '#417690';
+        dropZone.style.background = '#eff6ff';
+    });
+    dropZone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.style.borderColor = '#cbd5e1';
+        dropZone.style.background = '#f8fafc';
+    });
+    dropZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.style.borderColor = '#cbd5e1';
+        dropZone.style.background = '#f8fafc';
+        handleFiles(e.dataTransfer.files);
+    });
+
+    function renderMapping() {
+        tbody.innerHTML = '';
+        selectedFiles.forEach((file, i) => {
+            const tr = document.createElement('tr');
+            const suggested = suggestDataset(file.name);
+            tr.innerHTML = `
+                <td style="padding:8px;">${escapeHtml(file.name)}</td>
+                <td style="padding:8px;">
+                    <select class="dataset-select" data-index="${i}">
+                        <option value="">{% trans "Select a dataset" %}</option>
+                        ${datasets.map(d => `<option value="${d.id}" ${suggested === d.id ? 'selected' : ''}>${escapeHtml(d.display)}</option>`).join('')}
+                    </select>
+                </td>
+                <td><button type="button" class="remove-row" data-index="${i}">✕</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+        tbody.querySelectorAll('.remove-row').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const i = parseInt(this.dataset.index, 10);
+                selectedFiles.splice(i, 1);
+                renderMapping();
+            });
+        });
+    }
+
+    function escapeHtml(s) {
+        const d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+    }
+
+    clearBtn.addEventListener('click', function() {
+        selectedFiles = [];
+        fileInput.value = '';
+        renderMapping();
+        stepMapping.style.display = 'none';
+        stepOptions.style.display = 'none';
+        stepSubmit.style.display = 'none';
+    });
+
+    importBtn.addEventListener('click', function() {
+        const selects = tbody.querySelectorAll('.dataset-select');
+        const pairs = [];
+        let allMapped = true;
+        for (let i = 0; i < selectedFiles.length; i++) {
+            const datasetId = selects[i]?.value;
+            if (!datasetId) allMapped = false;
+            pairs.push({ file: selectedFiles[i], datasetId });
+        }
+        if (!allMapped) {
+            alert('{% trans "Please select a dataset for every file." %}');
+            return;
+        }
+        doUpload(pairs);
+    });
+
+    function doUpload(pairs) {
+        const formData = new FormData();
+        formData.append('csrfmiddlewaretoken', csrfToken);
+        formData.append('format_style', document.getElementById('format-style').value);
+        formData.append('year', document.getElementById('import-year').value);
+        formData.append('file_count', String(pairs.length));
+        pairs.forEach((p, i) => {
+            formData.append('file_' + i, p.file);
+            formData.append('dataset_' + i, p.datasetId);
+        });
+
+        progressModal.style.display = 'flex';
+        progressBar.style.width = '0%';
+        progressText.textContent = '{% trans "Uploading..." %} 0%';
+        progressDetail.textContent = '';
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', uploadUrl);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+        xhr.upload.onprogress = function(e) {
+            if (e.lengthComputable) {
+                const pct = Math.round((e.loaded / e.total) * 100);
+                progressBar.style.width = pct + '%';
+                progressText.textContent = '{% trans "Uploading..." %} ' + pct + '%';
+                progressDetail.textContent = e.loaded + ' / ' + e.total + ' bytes';
+            }
+        };
+
+        xhr.onload = function() {
+            progressBar.style.width = '100%';
+            progressText.textContent = '{% trans "Complete. Redirecting..." %}';
+            window.location.href = uploadUrl;
+        };
+
+        xhr.onerror = function() {
+            progressDetail.textContent = '{% trans "Error" %}';
+            setTimeout(() => { progressModal.style.display = 'none'; }, 2000);
+        };
+
+        xhr.send(formData);
+    }
+})();
+</script>
+{% endblock %}

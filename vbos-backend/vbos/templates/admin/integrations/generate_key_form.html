@@ -1,0 +1,20 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+{% block title %}{% trans "Generate API Key" %} | {{ block.super }}{% endblock %}
+{% block content %}
+<div id="content-main">
+  <h1>{% trans "Generate API Key" %}</h1>
+  <p>{% blocktrans with source=source.name %}Create a new API key for <strong>{{ source }}</strong>. The key will be shown once — copy it immediately.{% endblocktrans %}</p>
+  <form method="post">
+    {% csrf_token %}
+    <p>
+      <label for="key_name">{% trans "Key name (optional):" %}</label>
+      <input type="text" id="key_name" name="key_name" value="{{ source.name }} API Key" style="width: 300px;" />
+    </p>
+    <p>
+      <input type="submit" value="{% trans 'Generate Key' %}" class="default" />
+      <a href="{% url 'admin:integrations_integrationsource_changelist' %}">{% trans "Cancel" %}</a>
+    </p>
+  </form>
+</div>
+{% endblock %}

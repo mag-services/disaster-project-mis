@@ -1,0 +1,56 @@
+Year,Month,Day,Type,Cluster,Indicator,Attribute,Hazard Type,Hazard Response & Recovery,Climate Change,Past Hazard Events,Blue Economy,Agriculture,International Trade,Measure,Country,National,Province,Area Council,Village,Unit,Source,Year Collected,Frequency Collection,Value
+2024,,,Baseline,Education,Number Schools,ecce,,,,,,,,,,Vanuatu,,,,number,Ministry of Education and Training ,2024,Annually,1154
+2024,,,Baseline,Education,Number Schools,primary ,,,,,,,,,,Vanuatu,,,,number,Ministry of Education and Training ,2024,Annually,  870
+2024,,,Baseline,Education,Number Schools,secondary,,,,,,,,,,Vanuatu,,,,number,Ministry of Education and Training ,2024,Annually,  272
+2024,,,Baseline,Education,Number Schools,ecce,,,,,,,,,,Vanuatu,Torba,,,number,Ministry of Education and Training ,2024,Annually,  66
+2024,,,Baseline,Education,Number Schools,primary ,,,,,,,,,,Vanuatu,Torba,,,number,Ministry of Education and Training ,2024,Annually,  54
+2024,,,Baseline,Education,Number Schools,secondary,,,,,,,,,,Vanuatu,Torba,,,number,Ministry of Education and Training ,2024,Annually,  20
+2024,,,Baseline,Education,Number Schools,ecce,,,,,,,,,,Vanuatu,Sanma,,,number,Ministry of Education and Training ,2024,Annually,  240
+2024,,,Baseline,Education,Number Schools,primary ,,,,,,,,,,Vanuatu,Sanma,,,number,Ministry of Education and Training ,2024,Annually,  182
+2024,,,Baseline,Education,Number Schools,secondary,,,,,,,,,,Vanuatu,Sanma,,,number,Ministry of Education and Training ,2024,Annually,  38
+2024,,,Baseline,Education,Number Schools,ecce,,,,,,,,,,Vanuatu,Penama,,,number,Ministry of Education and Training ,2024,Annually,  196
+2024,,,Baseline,Education,Number Schools,primary ,,,,,,,,,,Vanuatu,Penama,,,number,Ministry of Education and Training ,2024,Annually,  124
+2024,,,Baseline,Education,Number Schools,secondary,,,,,,,,,,Vanuatu,Penama,,,number,Ministry of Education and Training ,2024,Annually,  34
+2024,,,Baseline,Education,Number Schools,ecce,,,,,,,,,,Vanuatu,Malampa,,,number,Ministry of Education and Training ,2024,Annually,  236
+2024,,,Baseline,Education,Number Schools,primary ,,,,,,,,,,Vanuatu,Malampa,,,number,Ministry of Education and Training ,2024,Annually,  172
+2024,,,Baseline,Education,Number Schools,secondary,,,,,,,,,,Vanuatu,Malampa,,,number,Ministry of Education and Training ,2024,Annually,  50
+2024,,,Baseline,Education,Number Schools,ecce,,,,,,,,,,Vanuatu,Shefa,,,number,Ministry of Education and Training ,2024,Annually,  190
+2024,,,Baseline,Education,Number Schools,primary ,,,,,,,,,,Vanuatu,Shefa,,,number,Ministry of Education and Training ,2024,Annually,  188
+2024,,,Baseline,Education,Number Schools,secondary,,,,,,,,,,Vanuatu,Shefa,,,number,Ministry of Education and Training ,2024,Annually,  82
+2024,,,Baseline,Education,Number Schools,ecce,,,,,,,,,,Vanuatu,Tafea,,,number,Ministry of Education and Training ,2024,Annually,  226
+2024,,,Baseline,Education,Number Schools,primary ,,,,,,,,,,Vanuatu,Tafea,,,number,Ministry of Education and Training ,2024,Annually,  150
+2024,,,Baseline,Education,Number Schools,secondary,,,,,,,,,,Vanuatu,Tafea,,,number,Ministry of Education and Training ,2024,Annually,  48
+2024,,,Baseline,Education,Number Schools,ecce,,,,,,,,,,Vanuatu,Torba,Torres,,number,Ministry of Education and Training ,2024,Annually,  6
+2024,,,Baseline,Education,Number Schools,primary ,,,,,,,,,,Vanuatu,Torba,Torres,,number,Ministry of Education and Training ,2024,Annually,  6
+2024,,,Baseline,Education,Number Schools,secondary,,,,,,,,,,Vanuatu,Torba,Torres,,number,Ministry of Education and Training ,2024,Annually,  2
+2024,,,Baseline,Education,Number Schools,ecce,,,,,,,,,,Vanuatu,Torba,Ureparapara,,number,Ministry of Education and Training ,2024,Annually,  4
+2024,,,Baseline,Education,Number Schools,primary ,,,,,,,,,,Vanuatu,Torba,Ureparapara,,number,Ministry of Education and Training ,2024,Annually,  4
+2024,,,Baseline,Education,Number Schools,secondary,,,,,,,,,,Vanuatu,Torba,Ureparapara,,number,Ministry of Education and Training ,2024,Annually,  2
+2024,,,Baseline,Education,Number Schools,ecce,,,,,,,,,,Vanuatu,Torba,Motalava,,number,Ministry of Education and Training ,2024,Annually,  8
+2024,,,Baseline,Education,Number Schools,primary ,,,,,,,,,,Vanuatu,Torba,Motalava,,number,Ministry of Education and Training ,2024,Annually,  6
+2024,,,Baseline,Education,Number Schools,secondary,,,,,,,,,,Vanuatu,Torba,Motalava,,number,Ministry of Education and Training ,2024,Annually,  2
+2024,,,Baseline,Education,Number Schools,ecce,,,,,,,,,,Vanuatu,Torba,East Vanualava,,number,Ministry of Education and Training ,2024,Annually,  8
+2024,,,Baseline,Health,Health Facility,hospital,,,,,,,,,,Vanuatu,,,,number,Ministry of Health,2024,Annually,6
+2024,,,Baseline,Health,Health Facility,health centre,,,,,,,,,,Vanuatu,,,,number,Ministry of Health,2024,Annually,4
+2024,,,Baseline,Health,Health Facility,dispensary,,,,,,,,,,Vanuatu,,,,number,Ministry of Health,2024,Annually,47
+2024,,,Baseline,Health,Health Facility,aidpost,,,,,,,,,,Vanuatu,,,,number,Ministry of Health,2024,Annually,169
+2024,,,Baseline,Health,Health Facility,hospital,,,,,,,,,,Vanuatu,Torba,,,number,Ministry of Health,2024,Annually,1
+2024,,,Baseline,Health,Health Facility,dispensary,,,,,,,,,,Vanuatu,Torba,,,number,Ministry of Health,2024,Annually,1
+2024,,,Baseline,Health,Health Facility,aidpost,,,,,,,,,,Vanuatu,Torba,,,number,Ministry of Health,2024,Annually,20
+2024,,,Baseline,Health,Health Facility,hospital,,,,,,,,,,Vanuatu,Sanma,,,number,Ministry of Health,2024,Annually,1
+2024,,,Baseline,Health,Health Facility,dispensary,,,,,,,,,,Vanuatu,Sanma,,,number,Ministry of Health,2024,Annually,7
+2024,,,Baseline,Health,Health Facility,aidpost,,,,,,,,,,Vanuatu,Sanma,,,number,Ministry of Health,2024,Annually,33
+2024,,,Baseline,Health,Health Facility,hospital,,,,,,,,,,Vanuatu,Penama,,,number,Ministry of Health,2024,Annually,1
+2024,,,Baseline,Health,Health Facility,health centre,,,,,,,,,,Vanuatu,Penama,,,number,Ministry of Health,2024,Annually,2
+2024,,,Baseline,Health,Health Facility,dispensary,,,,,,,,,,Vanuatu,Penama,,,number,Ministry of Health,2024,Annually,6
+2024,,,Baseline,Health,Health Facility,aidpost,,,,,,,,,,Vanuatu,Penama,,,number,Ministry of Health,2024,Annually,30
+2024,,,Baseline,Health,Health Facility,hospital,,,,,,,,,,Vanuatu,Malampa,,,number,Ministry of Health,2024,Annually,1
+2024,,,Baseline,Health,Health Facility,dispensary,,,,,,,,,,Vanuatu,Malampa,,,number,Ministry of Health,2024,Annually,12
+2024,,,Baseline,Health,Health Facility,aidpost,,,,,,,,,,Vanuatu,Malampa,,,number,Ministry of Health,2024,Annually,26
+2024,,,Baseline,Health,Health Facility,hospital,,,,,,,,,,Vanuatu,Shefa,,,number,Ministry of Health,2024,Annually,1
+2024,,,Baseline,Health,Health Facility,health centre,,,,,,,,,,Vanuatu,Shefa,,,number,Ministry of Health,2024,Annually,2
+2024,,,Baseline,Health,Health Facility,dispensary,,,,,,,,,,Vanuatu,Shefa,,,number,Ministry of Health,2024,Annually,9
+2024,,,Baseline,Health,Health Facility,aidpost,,,,,,,,,,Vanuatu,Shefa,,,number,Ministry of Health,2024,Annually,25
+2024,,,Baseline,Health,Health Facility,hospital,,,,,,,,,,Vanuatu,Tafea,,,number,Ministry of Health,2024,Annually,1
+2024,,,Baseline,Health,Health Facility,dispensary,,,,,,,,,,Vanuatu,Tafea,,,number,Ministry of Health,2024,Annually,12
+2024,,,Baseline,Health,Health Facility,aidpost,,,,,,,,,,Vanuatu,Tafea,,,number,Ministry of Health,2024,Annually,35

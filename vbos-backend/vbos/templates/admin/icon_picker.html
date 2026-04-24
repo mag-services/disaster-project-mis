@@ -1,0 +1,140 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+{% block title %}{% trans "Choose Icon" %} | {{ block.super }}{% endblock %}
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@flaticon/flaticon-uicons@3.3.1/css/solid/rounded.css" />
+<style>
+  #icon-picker-search { width: 100%; max-width: 400px; padding: 8px 12px; margin-bottom: 16px; font-size: 14px; }
+  #icon-picker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(48px, 1fr)); gap: 8px; max-height: 70vh; overflow-y: auto; }
+  .icon-picker-item { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; cursor: pointer; border: 2px solid #e0e0e0; border-radius: 6px; transition: all 0.15s; }
+  .icon-picker-item:hover { border-color: #417690; background: #f0f7ff; }
+  .icon-picker-item i { font-size: 24px; color: #333; }
+  .icon-picker-item:hover i { color: #417690; }
+  .icon-picker-suggested-item { cursor: pointer; border: 2px solid #e0e0e0; border-radius: 6px; }
+  .icon-picker-suggested-item:hover { border-color: #417690; background: #f0f7ff; }
+  .icon-picker-empty { grid-column: 1 / -1; padding: 24px; text-align: center; color: #666; }
+  .icon-picker-color-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 16px; padding: 12px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e0e0e0; }
+  .icon-picker-color-row label { font-size: 14px; font-weight: 500; }
+</style>
+{% endblock %}
+{% block content %}
+<div id="content-main">
+  <h1>{% trans "Choose Icon" %}</h1>
+  <p class="help">{% trans "50,000+ icons from Flaticon Uicons. Search and click to select." %}</p>
+
+  <div class="icon-picker-color-row">
+    <label for="icon-picker-color">{% trans "Marker color" %}</label>
+    <input type="color" id="icon-picker-color" value="#3d4aff" title="{% trans 'Marker color' %}" style="width: 44px; height: 32px; padding: 0; border: 1px solid #ccc; border-radius: 4px; cursor: pointer;" />
+    <button type="button" class="button" id="icon-picker-color-auto">{% trans "Auto (inherit)" %}</button>
+  </div>
+
+  <div class="icon-picker-suggested" style="margin-bottom: 20px;">
+    <h3 style="margin: 0 0 12px 0; font-size: 14px;">{% trans "Suggested" %}</h3>
+    <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+      {% for label, icon_id in cluster_icons %}
+      <div class="icon-picker-item icon-picker-suggested-item" data-icon="{{ icon_id }}" title="{{ label }} ({{ icon_id }})" style="flex-direction: column; width: 72px; height: 64px; padding: 4px;">
+        <i class="fi {{ icon_id }}" style="font-size: 24px; margin-bottom: 4px;"></i>
+        <span style="font-size: 11px; text-align: center; line-height: 1.2;">{{ label }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <input type="text" id="icon-picker-search" placeholder="{% trans 'Search icons...' %}" autofocus />
+  <div id="icon-picker-grid"></div>
+  <p class="help" style="margin-top: 16px;">
+    <a href="https://www.flaticon.com/uicons" target="_blank" rel="noopener">Uicons by Flaticon</a>
+  </p>
+</div>
+<script>
+(function() {
+  const icons = {{ icons_json|safe }};
+  const grid = document.getElementById('icon-picker-grid');
+  const searchInput = document.getElementById('icon-picker-search');
+  const colorPicker = document.getElementById('icon-picker-color');
+  let markerColorAuto = false;
+  /** Only send color when the user changed the color row (avoid resetting form to default blue on icon-only pick). */
+  let colorRowTouched = false;
+
+  document.getElementById('icon-picker-color-auto')?.addEventListener('click', function() {
+    markerColorAuto = true;
+    colorRowTouched = true;
+    if (colorPicker) colorPicker.style.opacity = '0.45';
+  });
+  colorPicker?.addEventListener('input', function() {
+    markerColorAuto = false;
+    colorRowTouched = true;
+    colorPicker.style.opacity = '1';
+  });
+
+  function selectIcon(iconId) {
+    if (window.opener) {
+      try {
+        var payload = { type: 'icon-picker-select', icon: iconId };
+        if (colorRowTouched) {
+          if (!markerColorAuto && colorPicker && /^#[0-9A-Fa-f]{6}$/.test((colorPicker.value || '').trim())) {
+            payload.color = colorPicker.value.trim().toLowerCase();
+          } else {
+            payload.color = '';
+          }
+        }
+        window.opener.postMessage(payload, '*');
+      } catch (e) {}
+    }
+    window.close();
+  }
+
+  document.querySelector('.icon-picker-suggested')?.addEventListener('click', function(e) {
+    const item = e.target.closest('.icon-picker-suggested-item');
+    if (item) selectIcon(item.dataset.icon);
+  });
+
+  // Search aliases: "water valve" also matches faucet, tap, etc.
+  const SEARCH_ALIASES = {
+    'valve': ['valve', 'faucet', 'tap', 'pipe'],
+    'water valve': ['valve', 'faucet', 'tap', 'water'],
+    'faucet': ['faucet', 'tap', 'valve'],
+    'plumbing': ['faucet', 'tap', 'pipe', 'water'],
+  };
+  function getSearchTerms(term) {
+    const t = term.trim().toLowerCase();
+    const terms = [t];
+    for (const [key, aliases] of Object.entries(SEARCH_ALIASES)) {
+      if (t.includes(key) || key.includes(t)) terms.push(...aliases);
+    }
+    return [...new Set(terms)];
+  }
+  function render(filter) {
+    const term = (filter || '').trim().toLowerCase();
+    const searchTerms = term ? getSearchTerms(term) : [];
+    const filtered = term ? icons.filter(function(id) {
+      const lower = id.toLowerCase();
+      return searchTerms.some(function(t) { return lower.indexOf(t) !== -1; });
+    }) : icons;
+    grid.innerHTML = '';
+    if (filtered.length === 0) {
+      grid.innerHTML = '<div class="icon-picker-empty">{% trans "No icons match your search." %}</div>';
+      return;
+    }
+    filtered.slice(0, 500).forEach(function(iconId) {
+      const div = document.createElement('div');
+      div.className = 'icon-picker-item';
+      div.title = iconId;
+      div.innerHTML = '<i class="fi ' + iconId + '"></i>';
+      div.onclick = function() { selectIcon(iconId); };
+      grid.appendChild(div);
+    });
+    if (filtered.length > 500) {
+      const more = document.createElement('div');
+      more.className = 'icon-picker-empty';
+      more.textContent = '{% trans "Showing first 500. Refine search to see more." %}';
+      grid.appendChild(more);
+    }
+  }
+
+  searchInput.oninput = function() { render(this.value); };
+  render();
+})();
+</script>
+{% endblock %}

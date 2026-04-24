@@ -1,0 +1,22 @@
+{% extends "admin/change_form.html" %}
+{% block extrahead %}
+{{ block.super }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'icon-picker-select' && e.data.icon) {
+      var input = document.querySelector('input[name="icon"]');
+      if (input) input.value = e.data.icon;
+      if (Object.prototype.hasOwnProperty.call(e.data, 'color')) {
+        var colorHex = document.querySelector('input.vbos-vector-color-hex[name="color"]')
+          || document.querySelector('input[name="color"]');
+        if (colorHex) {
+          colorHex.value = (e.data.color || '').trim();
+          colorHex.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      }
+    }
+  });
+});
+</script>
+{% endblock %}

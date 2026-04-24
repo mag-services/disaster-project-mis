@@ -1,0 +1,308 @@
+{% extends 'admin/base.html' %}
+{% load i18n unfold %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+    {% include "unfold/helpers/site_branding.html" %}
+{% endblock %}
+
+{% block content %}
+    {# items-start + no flex-grow: avoids a tall empty band below the last panel (Unfold main is a flex column) #}
+    <div class="drmis-admin-dashboard flex flex-col lg:flex-row lg:gap-8 lg:items-start">
+        <div class="w-full min-w-0 max-w-full">
+
+            {# Mode banner + switcher #}
+            <div class="drmis-dash-card drmis-dash-card--flush-bottom mb-5">
+
+                {% if admin_mode == "climate" %}
+                    <div class="drmis-dash-banner drmis-dash-banner--climate">
+                        <div>
+                            <div class="drmis-dash-title">{% trans "Climate Operator" %}</div>
+                            <div class="drmis-dash-eyebrow">{% trans "Raster · PMTiles · Vector · Deployment controls" %}</div>
+                        </div>
+                        <a href="{% url 'admin_climate_dashboard' %}" class="drmis-dash-link">{% trans "Climate dashboard →" %}</a>
+                    </div>
+                {% elif admin_mode == "compare" %}
+                    <div class="drmis-dash-banner drmis-dash-banner--compare">
+                        <div>
+                            <div class="drmis-dash-title">{% trans "Compare Operator" %}</div>
+                            <div class="drmis-dash-eyebrow">{% trans "RAP batch diffs · Provinces · Sectors · Intensity" %}</div>
+                        </div>
+                        <a href="{% url 'admin_compare_event' %}" class="drmis-dash-link">{% trans "Open compare →" %}</a>
+                    </div>
+                {% else %}
+                    <div class="drmis-dash-banner drmis-dash-banner--disaster">
+                        <div>
+                            <div class="drmis-dash-title">{% trans "Operator Pipeline" %}</div>
+                            <div class="drmis-dash-eyebrow">{% trans "RAP queue · Approvals · MFA · Backups" %}</div>
+                        </div>
+                        <a href="{% url 'admin_rap_import_upload' %}" class="drmis-dash-link">{% trans "Upload RAP CSVs →" %}</a>
+                    </div>
+                {% endif %}
+
+                <div class="drmis-dash-switcher">
+                    <span class="drmis-dash-switcher-label">{% trans "Switch view" %}</span>
+                    <div class="drmis-dash-mode-pills">
+                        <a href="?mode=disaster"
+                           class="drmis-dash-mode-pill drmis-dash-mode-pill--disaster{% if admin_mode == 'disaster' %} drmis-dash-mode-pill--active{% endif %}"
+                           {% if admin_mode == "disaster" %}aria-current="page"{% endif %}>{% trans "Disaster" %}</a>
+                        <a href="?mode=climate"
+                           class="drmis-dash-mode-pill drmis-dash-mode-pill--climate{% if admin_mode == 'climate' %} drmis-dash-mode-pill--active{% endif %}"
+                           {% if admin_mode == "climate" %}aria-current="page"{% endif %}>{% trans "Climate" %}</a>
+                        <a href="?mode=compare"
+                           class="drmis-dash-mode-pill drmis-dash-mode-pill--compare{% if admin_mode == 'compare' %} drmis-dash-mode-pill--active{% endif %}"
+                           {% if admin_mode == "compare" %}aria-current="page"{% endif %}>{% trans "Compare" %}</a>
+                    </div>
+                </div>
+            </div>
+
+            {# KPI row #}
+            <div class="drmis-dash-kpi-grid mb-5 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                <div class="drmis-dash-kpi">
+                    <div class="drmis-dash-kpi-label">{% trans "RAP Batches Pending" %}</div>
+                    <div class="drmis-admin-kpi-value">{{ kpi_rap_pending }}</div>
+                </div>
+                <div class="drmis-dash-kpi drmis-dash-kpi--accent-amber">
+                    <div class="drmis-dash-kpi-label">{% trans "Datasets Awaiting Approval" %}</div>
+                    <div class="drmis-admin-kpi-value">{{ kpi_approvals_pending }}</div>
+                </div>
+                <div class="drmis-dash-kpi">
+                    <div class="drmis-dash-kpi-label">{% trans "Users Without MFA" %}</div>
+                    <div class="drmis-admin-kpi-value">{{ kpi_mfa_missing }}</div>
+                </div>
+                {% if not last_backup_created_at %}
+                    <div class="drmis-dash-kpi drmis-dash-kpi--warn">
+                        <div class="drmis-dash-kpi-label">{% trans "Last Backup" %}</div>
+                        <div class="drmis-admin-kpi-value" style="color:#633806;font-size:16px;">{% trans "None yet" %}</div>
+                    </div>
+                {% elif kpi_last_backup_stale %}
+                    <div class="drmis-dash-kpi drmis-dash-kpi--alert">
+                        <div class="drmis-dash-kpi-label">{% trans "Last Backup" %}</div>
+                        <div class="drmis-admin-kpi-value drmis-admin-kpi-value--alert">{{ kpi_last_backup_age_label }}</div>
+                    </div>
+                {% else %}
+                    <div class="drmis-dash-kpi drmis-dash-kpi--accent-green">
+                        <div class="drmis-dash-kpi-label">{% trans "Last Backup" %}</div>
+                        <div class="drmis-admin-kpi-value">{{ kpi_last_backup_age_label }}</div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="space-y-4">
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div class="drmis-dash-card drmis-dash-card--flush-bottom">
+                    <div class="drmis-dash-card__header">
+                        <span class="drmis-dash-section-label">{% trans "RAP Import Queue" %}</span>
+                        <a href="{% url 'admin_rap_import_upload' %}" class="drmis-dash-link">{% trans "Upload new batch →" %}</a>
+                    </div>
+                    <div class="drmis-dash-card__body--table">
+                        {% if rap_batches_recent and rap_batches_recent|length > 0 %}
+                            <table class="drmis-dash-table">
+                                <thead>
+                                    <tr>
+                                        <th>{% trans "Batch" %}</th>
+                                        <th>{% trans "Cyclone" %}</th>
+                                        <th>{% trans "Max Cat" %}</th>
+                                        <th>{% trans "Status" %}</th>
+                                        <th class="drmis-dash-table__num">{% trans "Files" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for batch in rap_batches_recent %}
+                                        <tr>
+                                            <td class="drmis-dash-table__mono">{{ batch.batch_ref }}</td>
+                                            <td class="drmis-dash-table__mono">{{ batch.cyclone_name }}</td>
+                                            <td>{{ batch.max_intensity_badge }}</td>
+                                            <td>{{ batch.status_badge }}</td>
+                                            <td class="drmis-dash-table__num drmis-dash-table__muted">{{ batch.file_count }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <div class="drmis-dash-empty">{% trans "No batches yet. Upload RAP CSVs to begin." %}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="drmis-dash-card drmis-dash-card--flush-bottom">
+                    <div class="drmis-dash-card__header">
+                        <span class="drmis-dash-section-label">{% trans "Pending Approvals" %}</span>
+                        <a href="/admin/area_submissions/areadatasubmission/?status=submitted" class="drmis-dash-link">{% trans "Review all →" %}</a>
+                    </div>
+                    <div class="drmis-dash-card__body--table">
+                        {% if approvals_recent and approvals_recent|length > 0 %}
+                            <table class="drmis-dash-table">
+                                <thead>
+                                    <tr>
+                                        <th>{% trans "Dataset" %}</th>
+                                        <th>{% trans "Type" %}</th>
+                                        <th>{% trans "Ministry" %}</th>
+                                        <th class="drmis-dash-table__num">{% trans "Submitted" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in approvals_recent %}
+                                        <tr>
+                                            <td class="drmis-dash-table__mono">{{ item.dataset_name }}</td>
+                                            <td><span class="drmis-dash-pill-tag">{{ item.type }}</span></td>
+                                            <td class="drmis-dash-table__muted">{{ item.ministry }}</td>
+                                            <td class="drmis-dash-table__num drmis-dash-table__muted">
+                                                {% if item.submitted_at %}{{ item.submitted_at|date:"d M Y" }}{% else %}—{% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <div class="drmis-dash-empty">{% trans "No items pending approval." %}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="drmis-dash-card drmis-dash-card--flush-bottom">
+                <div class="drmis-dash-card__header">
+                    <span class="drmis-dash-section-label">{% trans "System Status" %}</span>
+                    <a href="/api/v1/health/" class="drmis-dash-link">{% trans "Full health check →" %}</a>
+                </div>
+                <div class="drmis-dash-card__body">
+                    <div class="drmis-dash-status-grid">
+                        <div>
+                            <div class="drmis-dash-micro-label">{% trans "Celery workers" %}</div>
+                            {% if system_status.celery_online %}
+                                <span class="drmis-dash-badge drmis-dash-badge--ok">Online</span>
+                            {% else %}
+                                <span class="drmis-dash-badge drmis-dash-badge--bad">Offline</span>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <div class="drmis-dash-micro-label">{% trans "Redis" %}</div>
+                            {% if system_status.redis_connected %}
+                                <span class="drmis-dash-badge drmis-dash-badge--ok">Connected</span>
+                            {% else %}
+                                <span class="drmis-dash-badge drmis-dash-badge--bad">Disconnected</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="drmis-dash-note">
+                        <div class="drmis-dash-micro-label">{% trans "Last backup" %}</div>
+                        <div class="drmis-dash-note__line">
+                            {% if system_status.last_backup_created_at %}
+                                <span>{{ system_status.last_backup_created_at|date:"d M Y H:i" }}</span>
+                                <span class="{% if system_status.last_backup_stale %}text-red-700{% else %}text-gray-500{% endif %}"> · {{ system_status.last_backup_age_label }}</span>
+                                {% if system_status.last_backup_status == "success" %}
+                                    <span class="text-green-800"> · {% trans "success" %}</span>
+                                {% endif %}
+                                {% if system_status.last_backup_stale %}
+                                    <span class="drmis-dash-badge drmis-dash-badge--bad" style="margin-left:10px;">{% trans "Stale" %}</span>
+                                {% endif %}
+                            {% else %}
+                                <span style="color:#633806;">{% trans "No backups yet" %}</span>
+                                <span class="text-gray-500"> — {% trans "run your first backup to create a restore point." %}</span>
+                                <div style="margin-top:8px;">
+                                    <a href="/admin/maintenance/" class="drmis-dash-link" style="font-weight:600;">{% trans "Backup & Restore" %} →</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="drmis-dash-card drmis-dash-card--flush-bottom">
+                <div class="drmis-dash-card__header">
+                    <span class="drmis-dash-section-label">{% trans "Recent Audit Activity" %}</span>
+                    <a href="/admin/core/auditlog/" class="drmis-dash-link">{% trans "Full audit log →" %}</a>
+                </div>
+                <div class="drmis-dash-card__body">
+                    {% if audit_logging_active %}
+                        {% if recent_audit and recent_audit|length > 0 %}
+                            <table class="drmis-dash-table">
+                                <thead>
+                                    <tr>
+                                        <th>{% trans "Timestamp" %}</th>
+                                        <th>{% trans "User" %}</th>
+                                        <th>{% trans "Action" %}</th>
+                                        <th>{% trans "Model" %}</th>
+                                        <th>{% trans "Object" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for a in recent_audit %}
+                                        <tr>
+                                            <td class="drmis-dash-table__muted">{{ a.timestamp|date:"d M Y H:i" }}</td>
+                                            <td class="drmis-dash-table__mono">{% if a.user %}{{ a.user }}{% else %}—{% endif %}</td>
+                                            <td class="drmis-dash-table__mono">{{ a.action|default:"—" }}</td>
+                                            <td class="drmis-dash-table__mono">{{ a.model|default:"—" }}</td>
+                                            <td class="drmis-dash-table__muted">{{ a.object|default:"—" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <div class="drmis-dash-empty">{% trans "No audit entries yet." %}</div>
+                        {% endif %}
+                    {% else %}
+                        <div class="drmis-dash-callout">
+                            <p>{% trans "Audit log is being set up. Once active, all data changes will appear here." %}</p>
+                            <p style="margin-top:10px;font-size:10px;">
+                                <a href="{{ admin_logentry_changelist_url }}" class="drmis-dash-link" style="font-weight:600;">{% trans "Learn more" %} →</a>
+                                <span class="text-gray-500"> — {% trans "review changes in the admin action log until then." %}</span>
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-4">
+                <div class="drmis-dash-card drmis-dash-card--flush-bottom">
+                    <div class="drmis-dash-card__header">
+                        <span class="drmis-dash-section-label">{% trans "Quick links" %}</span>
+                    </div>
+                    <ul class="drmis-dash-quicklinks">
+                        {% for item in dashboard_quick_links %}
+                            <li><a href="{{ item.url }}">{{ item.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="drmis-dash-card drmis-dash-card--flush-bottom">
+                    <div class="drmis-dash-card__header">
+                        <span class="drmis-dash-section-label">{% trans "Recent admin actions" %}</span>
+                        <a href="{{ admin_logentry_changelist_url }}" class="drmis-dash-link">{% trans "Full log →" %}</a>
+                    </div>
+                    <div class="drmis-dash-card__body--table">
+                        {% if recent_admin_actions and recent_admin_actions|length > 0 %}
+                            <table class="drmis-dash-table">
+                                <thead>
+                                    <tr>
+                                        <th>{% trans "When" %}</th>
+                                        <th>{% trans "User" %}</th>
+                                        <th>{% trans "Action" %}</th>
+                                        <th>{% trans "Summary" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in recent_admin_actions %}
+                                        <tr>
+                                            <td class="drmis-dash-table__muted" style="white-space:nowrap;">{{ row.when|date:"d M H:i" }}</td>
+                                            <td class="drmis-dash-table__mono">{{ row.user }}</td>
+                                            <td class="drmis-dash-table__mono">{{ row.action }}</td>
+                                            <td class="drmis-dash-table__muted">{{ row.summary }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <div class="drmis-dash-empty">{% trans "No recent admin actions." %}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% load admin_list %}
+
+{% if actions_on_top %}
+    {% if cl.search_fields or action_form or cl.has_filters %}
+        <div class="backdrop-blur-xs bg-white/80 border-t border-base-200 sticky bottom-0 left-0 right-0 z-40 mt-4 -mx-4 -mb-4 px-4 py-3 dark:bg-base-900/80 dark:border-base-800" x-show="hasSelection" x-cloak x-transition>
+            <div id="changelist-actions-wrapper" class="grow group changelist-actions flex flex-col gap-3 items-center lg:flex-row lg:h-[64px] lg:justify-end" {% if not is_popup %}x-bind:class="{'xl:ml-0': !sidebarDesktopOpen, 'xl:ml-72': sidebarDesktopOpen}"{% endif %}>
+                {% if action_form %}
+                    {% admin_actions %}
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+{% endif %}

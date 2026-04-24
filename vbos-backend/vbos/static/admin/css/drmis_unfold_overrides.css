@@ -1,0 +1,50 @@
+/**
+ * Unfold-specific spacing + card surfaces (loads via UNFOLD["STYLES"]).
+ * Keeps one border color and subtle elevation for dashboard-style blocks.
+ */
+:root {
+  --drmis-admin-border: #e2e6ee;
+  --drmis-admin-rule: #f1f3f7;
+  --drmis-admin-shadow: 0 1px 2px rgba(13, 16, 24, 0.05), 0 2px 8px rgba(13, 16, 24, 0.04);
+  --drmis-font-ui: "Segoe UI Variable", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --drmis-font-mono: "Segoe UI Mono", "Cascadia Mono", Consolas, ui-monospace, monospace;
+}
+
+html,
+body {
+  font-family: var(--drmis-font-ui);
+}
+
+/* Roomier changelist / inline tables */
+#result_list thead th,
+table thead th {
+  padding: 11px 16px !important;
+  font-size: 10px !important;
+  letter-spacing: 0.08em !important;
+}
+
+#result_list tbody td,
+table tbody td {
+  padding: 11px 16px !important;
+  font-size: 12px !important;
+  vertical-align: middle !important;
+}
+
+/* Unfold list tables inside main */
+[class*="results"] table thead th,
+[class*="changelist"] table thead th {
+  padding: 11px 16px !important;
+  font-size: 10px !important;
+}
+
+[class*="results"] table tbody td,
+[class*="changelist"] table tbody td {
+  padding: 11px 16px !important;
+}
+
+/* Card-like surfaces (modules, filter cards) */
+.module,
+[class*="card"]:not(.drmis-dash-mode-pill) {
+  box-shadow: var(--drmis-admin-shadow) !important;
+  border-color: var(--drmis-admin-border) !important;
+}

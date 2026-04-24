@@ -1,0 +1,574 @@
+{
+  "provinces": {
+    "Torba": {
+      "physical_account": {
+        "opening": {
+          "Water Bodies": 22.164279999999998,
+          "Grassland": 106.70944,
+          "Mangrove": 1.6371599999999997,
+          "Bareland": 23.35512,
+          "Built Up": 0.35691,
+          "Forest": 702.4031299999999
+        },
+        "additions": {
+          "Water Bodies": 2.56806,
+          "Grassland": 41.4011,
+          "Mangrove": 1.03538,
+          "Bareland": 2.4163,
+          "Built Up": 0.6296200000000001,
+          "Forest": 103.75441000000001
+        },
+        "reductions": {
+          "Water Bodies": 1.6033099999999998,
+          "Grassland": 90.27448,
+          "Mangrove": 0.9611599999999999,
+          "Bareland": 17.99452,
+          "Built Up": 0.19091,
+          "Forest": 40.78049
+        },
+        "net_change": {
+          "Water Bodies": 0.9647500000000002,
+          "Grassland": -48.87338,
+          "Mangrove": 0.07422000000000006,
+          "Bareland": -15.578220000000002,
+          "Built Up": 0.43871000000000004,
+          "Forest": 62.97392000000001
+        },
+        "closing": {
+          "Water Bodies": 23.129029999999997,
+          "Grassland": 57.83606000000002,
+          "Mangrove": 1.7113799999999997,
+          "Bareland": 7.776899999999998,
+          "Built Up": 0.7956200000000001,
+          "Forest": 765.3770499999999
+        }
+      },
+      "unit": "sqkm",
+      "change_matrix": {
+        "Water Bodies": {
+          "Water Bodies": 20.56097,
+          "Grassland": 0.04043,
+          "Mangrove": 0.13002,
+          "Bareland": 0.7091299999999999,
+          "Built Up": 0.0013,
+          "Forest": 0.7224299999999999
+        },
+        "Grassland": {
+          "Water Bodies": 0.05469,
+          "Grassland": 16.43496,
+          "Mangrove": 0.0027900000000000004,
+          "Bareland": 0.89074,
+          "Built Up": 0.29869,
+          "Forest": 89.02757
+        },
+        "Mangrove": {
+          "Water Bodies": 0.14476,
+          "Grassland": 0.01795,
+          "Mangrove": 0.6759999999999999,
+          "Bareland": 0.05975,
+          "Built Up": 0.00047,
+          "Forest": 0.7382299999999999
+        },
+        "Bareland": {
+          "Water Bodies": 1.54312,
+          "Grassland": 3.13712,
+          "Mangrove": 0.067,
+          "Bareland": 5.3606,
+          "Built Up": 0.07583999999999999,
+          "Forest": 13.17144
+        },
+        "Built Up": {
+          "Water Bodies": 0.00199,
+          "Grassland": 0.03605,
+          "Mangrove": 0.0004,
+          "Bareland": 0.05773,
+          "Built Up": 0.166,
+          "Forest": 0.09474
+        },
+        "Forest": {
+          "Water Bodies": 0.8234999999999999,
+          "Grassland": 38.16955,
+          "Mangrove": 0.83517,
+          "Bareland": 0.69895,
+          "Built Up": 0.25332,
+          "Forest": 661.6226399999999
+        }
+      }
+    },
+    "Sanma": {
+      "physical_account": {
+        "opening": {
+          "Water Bodies": 42.41203,
+          "Grassland": 863.36086,
+          "Mangrove": 3.63969,
+          "Bareland": 157.49777,
+          "Built Up": 4.32191,
+          "Forest": 3158.7686700000004
+        },
+        "additions": {
+          "Water Bodies": 6.017740000000001,
+          "Grassland": 209.00767000000002,
+          "Mangrove": 0.71982,
+          "Bareland": 14.60601,
+          "Built Up": 1.1055099999999998,
+          "Forest": 821.5805300000001
+        },
+        "reductions": {
+          "Water Bodies": 38.71888,
+          "Grassland": 680.78576,
+          "Mangrove": 2.52563,
+          "Bareland": 134.90671,
+          "Built Up": 2.3028699999999995,
+          "Forest": 193.79743000000005
+        },
+        "net_change": {
+          "Water Bodies": -32.701139999999995,
+          "Grassland": -471.77808999999996,
+          "Mangrove": -1.8058100000000001,
+          "Bareland": -120.3007,
+          "Built Up": -1.1973599999999998,
+          "Forest": 627.7831
+        },
+        "closing": {
+          "Water Bodies": 9.710890000000006,
+          "Grassland": 391.58277,
+          "Mangrove": 1.8338800000000002,
+          "Bareland": 37.19707,
+          "Built Up": 3.12455,
+          "Forest": 3786.5517700000005
+        }
+      },
+      "unit": "sqkm",
+      "change_matrix": {
+        "Water Bodies": {
+          "Water Bodies": 3.69315,
+          "Grassland": 1.48862,
+          "Mangrove": 0.31688,
+          "Bareland": 2.23616,
+          "Built Up": 0.009170000000000001,
+          "Forest": 34.66805
+        },
+        "Grassland": {
+          "Water Bodies": 0.38047,
+          "Grassland": 182.5751,
+          "Mangrove": 0.01873,
+          "Bareland": 6.99198,
+          "Built Up": 0.42412999999999995,
+          "Forest": 672.97045
+        },
+        "Mangrove": {
+          "Water Bodies": 0.18048999999999998,
+          "Grassland": 0.01594,
+          "Mangrove": 1.11406,
+          "Bareland": 0.08524,
+          "Built Up": 0.0,
+          "Forest": 2.24396
+        },
+        "Bareland": {
+          "Water Bodies": 3.8572,
+          "Grassland": 19.17297,
+          "Mangrove": 0.13074,
+          "Bareland": 22.591060000000002,
+          "Built Up": 0.50052,
+          "Forest": 111.24528000000001
+        },
+        "Built Up": {
+          "Water Bodies": 0.01395,
+          "Grassland": 1.05079,
+          "Mangrove": 0.0004,
+          "Bareland": 0.78494,
+          "Built Up": 2.01904,
+          "Forest": 0.45279
+        },
+        "Forest": {
+          "Water Bodies": 1.5856299999999999,
+          "Grassland": 187.27935000000002,
+          "Mangrove": 0.25306999999999996,
+          "Bareland": 4.50769,
+          "Built Up": 0.17169,
+          "Forest": 2964.9712400000003
+        }
+      }
+    },
+    "Penama": {
+      "physical_account": {
+        "opening": {
+          "Water Bodies": 5.81415,
+          "Grassland": 193.00851000000003,
+          "Mangrove": 1.92623,
+          "Bareland": 76.05245,
+          "Built Up": 1.52164,
+          "Forest": 913.89182
+        },
+        "additions": {
+          "Water Bodies": 2.0337199999999998,
+          "Grassland": 24.600500000000004,
+          "Mangrove": 5.14745,
+          "Bareland": 2.45965,
+          "Built Up": 0.83033,
+          "Forest": 232.63992000000002
+        },
+        "reductions": {
+          "Water Bodies": 2.22504,
+          "Grassland": 180.52128000000002,
+          "Mangrove": 0.41688000000000003,
+          "Bareland": 61.62751,
+          "Built Up": 1.25965,
+          "Forest": 21.661210000000004
+        },
+        "net_change": {
+          "Water Bodies": -0.19132000000000016,
+          "Grassland": -155.92078,
+          "Mangrove": 4.73057,
+          "Bareland": -59.167860000000005,
+          "Built Up": -0.4293199999999999,
+          "Forest": 210.97871
+        },
+        "closing": {
+          "Water Bodies": 5.6228299999999996,
+          "Grassland": 37.08773000000002,
+          "Mangrove": 6.6568000000000005,
+          "Bareland": 16.88458999999999,
+          "Built Up": 1.0923200000000002,
+          "Forest": 1124.8705300000001
+        }
+      },
+      "unit": "sqkm",
+      "change_matrix": {
+        "Water Bodies": {
+          "Water Bodies": 3.58911,
+          "Grassland": 0.030350000000000002,
+          "Mangrove": 0.46923000000000004,
+          "Bareland": 0.74505,
+          "Built Up": 0.01318,
+          "Forest": 0.96723
+        },
+        "Grassland": {
+          "Water Bodies": 0.04553,
+          "Grassland": 12.48723,
+          "Mangrove": 0.055119999999999995,
+          "Bareland": 0.61324,
+          "Built Up": 0.14856999999999998,
+          "Forest": 179.65882000000002
+        },
+        "Mangrove": {
+          "Water Bodies": 0.09144999999999999,
+          "Grassland": 0.0,
+          "Mangrove": 1.50935,
+          "Bareland": 0.03714,
+          "Built Up": 0.0012,
+          "Forest": 0.28709
+        },
+        "Bareland": {
+          "Water Bodies": 1.40593,
+          "Grassland": 8.5635,
+          "Mangrove": 0.40536,
+          "Bareland": 14.42494,
+          "Built Up": 0.26239,
+          "Forest": 50.99033
+        },
+        "Built Up": {
+          "Water Bodies": 0.01558,
+          "Grassland": 0.31112,
+          "Mangrove": 0.0024,
+          "Bareland": 0.1941,
+          "Built Up": 0.26199,
+          "Forest": 0.7364499999999999
+        },
+        "Forest": {
+          "Water Bodies": 0.47523000000000004,
+          "Grassland": 15.695530000000002,
+          "Mangrove": 4.21534,
+          "Bareland": 0.87012,
+          "Built Up": 0.40499,
+          "Forest": 892.2306100000001
+        }
+      }
+    },
+    "Malampa": {
+      "physical_account": {
+        "opening": {
+          "Water Bodies": 12.272560000000002,
+          "Grassland": 256.37691,
+          "Mangrove": 22.176099999999998,
+          "Bareland": 119.79554999999999,
+          "Built Up": 4.27609,
+          "Forest": 2380.86224
+        },
+        "additions": {
+          "Water Bodies": 19.14328,
+          "Grassland": 51.892089999999996,
+          "Mangrove": 11.37089,
+          "Bareland": 17.314390000000003,
+          "Built Up": 1.58102,
+          "Forest": 286.66907
+        },
+        "reductions": {
+          "Water Bodies": 8.97616,
+          "Grassland": 228.22938000000002,
+          "Mangrove": 3.01579,
+          "Bareland": 70.45031,
+          "Built Up": 3.25211,
+          "Forest": 74.04699
+        },
+        "net_change": {
+          "Water Bodies": 10.16712,
+          "Grassland": -176.33729000000002,
+          "Mangrove": 8.3551,
+          "Bareland": -53.13592,
+          "Built Up": -1.67109,
+          "Forest": 212.62207999999998
+        },
+        "closing": {
+          "Water Bodies": 22.439680000000003,
+          "Grassland": 80.03961999999999,
+          "Mangrove": 30.531199999999995,
+          "Bareland": 66.65962999999999,
+          "Built Up": 2.6050000000000004,
+          "Forest": 2593.48432
+        }
+      },
+      "unit": "sqkm",
+      "change_matrix": {
+        "Water Bodies": {
+          "Water Bodies": 3.2963999999999998,
+          "Grassland": 0.1892,
+          "Mangrove": 0.77861,
+          "Bareland": 2.50707,
+          "Built Up": 0.11091,
+          "Forest": 5.390370000000001
+        },
+        "Grassland": {
+          "Water Bodies": 1.48615,
+          "Grassland": 28.147530000000003,
+          "Mangrove": 0.02274,
+          "Bareland": 3.8514,
+          "Built Up": 0.22419,
+          "Forest": 222.6449
+        },
+        "Mangrove": {
+          "Water Bodies": 0.34952,
+          "Grassland": 0.00319,
+          "Mangrove": 19.16031,
+          "Bareland": 0.12928,
+          "Built Up": 0.00918,
+          "Forest": 2.52462
+        },
+        "Bareland": {
+          "Water Bodies": 11.6651,
+          "Grassland": 3.65716,
+          "Mangrove": 0.33926,
+          "Bareland": 49.345240000000004,
+          "Built Up": 0.43565,
+          "Forest": 54.35314
+        },
+        "Built Up": {
+          "Water Bodies": 0.13454,
+          "Grassland": 0.62774,
+          "Mangrove": 0.09742,
+          "Bareland": 0.63637,
+          "Built Up": 1.02398,
+          "Forest": 1.75604
+        },
+        "Forest": {
+          "Water Bodies": 5.50797,
+          "Grassland": 47.41479999999999,
+          "Mangrove": 10.132859999999999,
+          "Bareland": 10.19027,
+          "Built Up": 0.80109,
+          "Forest": 2306.81525
+        }
+      }
+    },
+    "Shefa": {
+      "physical_account": {
+        "opening": {
+          "Water Bodies": 8.76836,
+          "Grassland": 250.35537000000002,
+          "Mangrove": 8.44209,
+          "Bareland": 25.33152,
+          "Built Up": 11.357619999999999,
+          "Forest": 1191.84009
+        },
+        "additions": {
+          "Water Bodies": 3.69332,
+          "Grassland": 69.79184000000001,
+          "Mangrove": 3.3230299999999997,
+          "Bareland": 13.012379999999999,
+          "Built Up": 5.02062,
+          "Forest": 156.06456000000003
+        },
+        "reductions": {
+          "Water Bodies": 5.7354199999999995,
+          "Grassland": 148.87667000000002,
+          "Mangrove": 4.31577,
+          "Bareland": 17.33327,
+          "Built Up": 4.6356,
+          "Forest": 70.00902
+        },
+        "net_change": {
+          "Water Bodies": -2.0420999999999996,
+          "Grassland": -79.08483000000001,
+          "Mangrove": -0.99274,
+          "Bareland": -4.32089,
+          "Built Up": 0.3850199999999999,
+          "Forest": 86.05554000000002
+        },
+        "closing": {
+          "Water Bodies": 6.72626,
+          "Grassland": 171.27054,
+          "Mangrove": 7.44935,
+          "Bareland": 21.01063,
+          "Built Up": 11.742639999999998,
+          "Forest": 1277.89563
+        }
+      },
+      "unit": "sqkm",
+      "change_matrix": {
+        "Water Bodies": {
+          "Water Bodies": 3.03294,
+          "Grassland": 0.30883,
+          "Mangrove": 0.37396,
+          "Bareland": 1.1351,
+          "Built Up": 0.09948,
+          "Forest": 3.81805
+        },
+        "Grassland": {
+          "Water Bodies": 0.5326,
+          "Grassland": 101.4787,
+          "Mangrove": 0.12025999999999999,
+          "Bareland": 6.80702,
+          "Built Up": 1.70202,
+          "Forest": 139.71477000000002
+        },
+        "Mangrove": {
+          "Water Bodies": 0.32002,
+          "Grassland": 0.02597,
+          "Mangrove": 4.12632,
+          "Bareland": 0.17339,
+          "Built Up": 0.02477,
+          "Forest": 3.77162
+        },
+        "Bareland": {
+          "Water Bodies": 1.03999,
+          "Grassland": 6.76786,
+          "Mangrove": 0.15782,
+          "Bareland": 7.9982500000000005,
+          "Built Up": 1.9960900000000001,
+          "Forest": 7.37151
+        },
+        "Built Up": {
+          "Water Bodies": 0.03636,
+          "Grassland": 1.6005099999999999,
+          "Mangrove": 0.00839,
+          "Bareland": 1.60173,
+          "Built Up": 6.72202,
+          "Forest": 1.38861
+        },
+        "Forest": {
+          "Water Bodies": 1.76435,
+          "Grassland": 61.08867,
+          "Mangrove": 2.6626,
+          "Bareland": 3.29514,
+          "Built Up": 1.1982599999999999,
+          "Forest": 1121.83107
+        }
+      }
+    },
+    "Tafea": {
+      "physical_account": {
+        "opening": {
+          "Water Bodies": 28.47499,
+          "Grassland": 79.59595,
+          "Mangrove": 4.5907,
+          "Bareland": 39.394279999999995,
+          "Built Up": 7.791219999999999,
+          "Forest": 1466.67444
+        },
+        "additions": {
+          "Water Bodies": 13.66349,
+          "Grassland": 16.50107,
+          "Mangrove": 124.86219,
+          "Bareland": 17.85255,
+          "Built Up": 2.09537,
+          "Forest": 112.40653
+        },
+        "reductions": {
+          "Water Bodies": 25.46601,
+          "Grassland": 70.9354,
+          "Mangrove": 1.8457499999999998,
+          "Bareland": 28.27739,
+          "Built Up": 7.39799,
+          "Forest": 153.45865999999998
+        },
+        "net_change": {
+          "Water Bodies": -11.802520000000001,
+          "Grassland": -54.43433,
+          "Mangrove": 123.01644,
+          "Bareland": -10.42484,
+          "Built Up": -5.30262,
+          "Forest": -41.05212999999998
+        },
+        "closing": {
+          "Water Bodies": 16.67247,
+          "Grassland": 25.16162,
+          "Mangrove": 127.60714,
+          "Bareland": 28.969439999999995,
+          "Built Up": 2.488599999999998,
+          "Forest": 1425.62231
+        }
+      },
+      "unit": "sqkm",
+      "change_matrix": {
+        "Water Bodies": {
+          "Water Bodies": 3.00898,
+          "Grassland": 0.75589,
+          "Mangrove": 1.03438,
+          "Bareland": 1.32161,
+          "Built Up": 0.0556,
+          "Forest": 22.29853
+        },
+        "Grassland": {
+          "Water Bodies": 1.3420400000000001,
+          "Grassland": 8.66055,
+          "Mangrove": 2.14062,
+          "Bareland": 1.29828,
+          "Built Up": 0.11199999999999999,
+          "Forest": 66.04246
+        },
+        "Mangrove": {
+          "Water Bodies": 0.29523,
+          "Grassland": 0.0084,
+          "Mangrove": 2.7449500000000002,
+          "Bareland": 0.15842,
+          "Built Up": 0.0048,
+          "Forest": 1.3788999999999998
+        },
+        "Bareland": {
+          "Water Bodies": 4.38438,
+          "Grassland": 2.35614,
+          "Mangrove": 1.7803499999999999,
+          "Bareland": 11.116890000000001,
+          "Built Up": 1.4013,
+          "Forest": 18.35522
+        },
+        "Built Up": {
+          "Water Bodies": 0.7200700000000001,
+          "Grassland": 1.53044,
+          "Mangrove": 0.0132,
+          "Bareland": 0.80286,
+          "Built Up": 0.39323,
+          "Forest": 4.33142
+        },
+        "Forest": {
+          "Water Bodies": 6.92177,
+          "Grassland": 11.8502,
+          "Mangrove": 119.89363999999999,
+          "Bareland": 14.271379999999999,
+          "Built Up": 0.52167,
+          "Forest": 1313.21578
+        }
+      }
+    }
+  }
+}

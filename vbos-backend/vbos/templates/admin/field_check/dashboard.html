@@ -1,0 +1,95 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; <a href="{% url 'admin:field_check_fieldcheckrecord_changelist' %}">{% trans 'Field Check Records' %}</a>
+  &rsaquo; {{ title }}
+</div>
+{% endblock %}
+{% block content %}
+<div id="content-main">
+  <h1 style="margin-bottom: 20px;">{{ title }}</h1>
+
+  <div class="module" style="margin-bottom: 24px; padding: 16px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
+    <h2 style="margin: 0 0 8px 0; font-size: 1.1em;">{% trans "Summary" %}</h2>
+    <p style="margin: 0; font-size: 1.2em;">
+      <strong>{% trans "Confidence:" %}</strong> <span style="font-size: 1.4em; color: #0a0;">{{ confidence_percent }}%</span>
+      &nbsp;&nbsp;|&nbsp;&nbsp;
+      <strong>{% trans "Coverage:" %}</strong> {{ coverage_percent }}% {% trans "of items field checked" %}
+    </p>
+    <p style="margin: 8px 0 0 0; color: #666; font-size: 0.9em;">
+      {% trans "Confidence improves with continuous field checks after each cyclone. Weighting: verified=100%%, adjusted=75%%, rejected=0%%, model (not checked)=0%%." %}
+    </p>
+  </div>
+
+  <div class="module" style="margin-bottom: 24px;">
+    <h2 style="margin-bottom: 12px;">{% trans "Coverage" %}</h2>
+    <table style="width: 100%; max-width: 500px; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th style="border: 1px solid #dee2e6; padding: 8px; text-align: left;">{% trans "Confidence" %}</th>
+          <th style="border: 1px solid #dee2e6; padding: 8px; text-align: right;">{% trans "Count" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="border: 1px solid #dee2e6; padding: 8px;">{% trans "Model (not checked)" %}</td>
+          <td style="border: 1px solid #dee2e6; padding: 8px; text-align: right;">{{ model_count }}</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #dee2e6; padding: 8px;">{% trans "Field verified" %}</td>
+          <td style="border: 1px solid #dee2e6; padding: 8px; text-align: right;">{{ verified_count }}</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #dee2e6; padding: 8px;">{% trans "Field adjusted" %}</td>
+          <td style="border: 1px solid #dee2e6; padding: 8px; text-align: right;">{{ adjusted_count }}</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #dee2e6; padding: 8px;">{% trans "Rejected" %}</td>
+          <td style="border: 1px solid #dee2e6; padding: 8px; text-align: right;">{{ rejected_count }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top: 12px;">
+      <strong>{% trans "Total damage items:" %}</strong> {{ total_items }} &nbsp;|&nbsp;
+      <strong>{% trans "Field checked:" %}</strong> {{ field_checked }} ({{ coverage_percent }}%) &nbsp;|&nbsp;
+      <strong>{% trans "Confidence:" %}</strong> {{ confidence_percent }}%
+    </p>
+    <p style="margin-top: 6px; color: #666; font-size: 0.9em;">
+      {% trans "Confidence is weighted: verified=100%%, adjusted=75%%, rejected=0%%, model (not checked)=0%%. Improves with continuous field checks after each cyclone." %}
+    </p>
+  </div>
+
+  <div class="module" style="margin-bottom: 24px;">
+    <h2 style="margin-bottom: 12px;">{% trans "Records per week (last 8 weeks)" %}</h2>
+    <table style="width: 100%; max-width: 400px; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th style="border: 1px solid #dee2e6; padding: 8px; text-align: left;">{% trans "Week starting" %}</th>
+          <th style="border: 1px solid #dee2e6; padding: 8px; text-align: right;">{% trans "Records" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for w in weekly %}
+        <tr>
+          <td style="border: 1px solid #dee2e6; padding: 8px;">{{ w.week }}</td>
+          <td style="border: 1px solid #dee2e6; padding: 8px; text-align: right;">{{ w.count }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="2" style="border: 1px solid #dee2e6; padding: 8px; color: #666;">{% trans "No data" %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <p>
+    <a href="{% url 'admin:field_check_fieldcheckrecord_changelist' %}">{% trans "View all Field Check Records" %}</a>
+    &nbsp;|&nbsp;
+    <a href="{% url 'admin:field_check_fieldcheckrecord_add' %}">{% trans "Add Field Check Record" %}</a>
+  </p>
+</div>
+{% endblock %}

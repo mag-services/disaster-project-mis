@@ -1,0 +1,11 @@
+# Large data files
+Land_Accounts*.xlsx
+*.tar
+*.tif
+vbos-backend/data/*.tif
+
+# Deployment secrets
+deploy/vm/.env
+
+# Editor lock files
+.~lock.*

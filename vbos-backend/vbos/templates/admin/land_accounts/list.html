@@ -1,0 +1,56 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls %}
+{% block title %}{{ title }} | {{ block.super }}{% endblock %}
+{% block content %}
+<div id="content-main">
+  <p style="margin-bottom: 16px;">
+    <form method="post" action="{% url 'admin_land_accounts_add' %}" style="display: inline;">
+      {% csrf_token %}
+      <button type="submit" class="addlink" style="background: none; border: none; color: #417690; cursor: pointer; font-size: 14px; padding: 0;">+ {% trans "Add Land Accounts" %}</button>
+    </form>
+    &nbsp;|&nbsp;
+    <a href="{% url 'admin_land_accounts_template' %}">{% trans "Download template" %}</a>
+    &nbsp;|&nbsp;
+    <form method="post" action="{% url 'admin_land_accounts_import' %}" enctype="multipart/form-data" style="display: inline;">
+      {% csrf_token %}
+      <input type="text" name="title" placeholder="{% trans 'Title (e.g. 2020-2023)' %}" style="width: 140px; padding: 4px; font-size: 13px;">
+      <input type="file" name="file" accept=".xlsx" required style="font-size: 13px;">
+      <button type="submit" style="background: #417690; color: white; border: none; padding: 6px 12px; cursor: pointer; font-size: 13px; border-radius: 4px;">{% trans "Import from Excel" %}</button>
+    </form>
+  </p>
+  <table class="la-list-table" style="border-collapse: collapse; width: 100%; max-width: 600px;">
+    <thead>
+      <tr>
+        <th style="border: 1px solid #dee2e6; padding: 8px; text-align: left;">ID</th>
+        <th style="border: 1px solid #dee2e6; padding: 8px; text-align: left;">{% trans "Title / Year" %}</th>
+        <th style="border: 1px solid #dee2e6; padding: 8px; text-align: left;">{% trans "Last updated" %}</th>
+        <th style="border: 1px solid #dee2e6; padding: 8px; text-align: left;">{% trans "Provinces" %}</th>
+        <th style="border: 1px solid #dee2e6; padding: 8px; text-align: left;">{% trans "Actions" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for obj in objects %}
+      <tr>
+        <td style="border: 1px solid #dee2e6; padding: 8px;">{{ obj.pk }}</td>
+        <td style="border: 1px solid #dee2e6; padding: 8px;">{{ obj.title|default:"—" }}</td>
+        <td style="border: 1px solid #dee2e6; padding: 8px;">{{ obj.updated_at|date:"Y-m-d H:i" }}</td>
+        <td style="border: 1px solid #dee2e6; padding: 8px;">{{ obj.provinces_count }}</td>
+        <td style="border: 1px solid #dee2e6; padding: 8px;">
+          <a href="{% url 'admin_land_accounts_edit' object_id=obj.pk %}">{% trans "Edit" %}</a>
+          &nbsp;|&nbsp;
+          <a href="{% url 'admin_land_accounts_edit' object_id=obj.pk %}?mode=simple">{% trans "Edit (simple)" %}</a>
+          &nbsp;|&nbsp;
+          <a href="{% url 'admin_land_accounts_delete' object_id=obj.pk %}" style="color: #ba2121;">{% trans "Delete" %}</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" style="border: 1px solid #dee2e6; padding: 16px; color: #666;">
+          {% trans "No land accounts data. Click Add to create one." %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; {{ title }}
+</div>
+{% endblock %}
+{% block content %}
+<div id="content-main">
+  <h1 style="margin-bottom: 20px;">{{ title }}</h1>
+  <p style="margin-bottom: 16px;">
+    <a href="{% url 'admin_climate_import_geojson' %}" class="addlink">{% trans "Upload GeoJSON" %}</a>
+  </p>
+  <div class="module">
+    <table style="width: 100%;">
+      <caption style="display: none;">{{ title }}</caption>
+      <tbody>
+        {% for m in modules %}
+        <tr class="model-{{ m.id }}">
+          <th scope="row" style="padding: 12px 0; border-bottom: 1px solid #eee;">
+            {% if m.url %}
+            <a href="{{ m.url }}">{{ m.label }}</a>
+            {% else %}
+            <span style="color: #999;">{{ m.label }}</span>
+            <small style="color: #999;"> ({% trans "Coming soon" %})</small>
+            {% endif %}
+          </th>
+          <td style="padding: 12px 0; border-bottom: 1px solid #eee; text-align: right;">
+            {% if m.url %}
+            <a href="{{ m.url }}" class="addlink">{% trans "Manage" %}</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if rap_qc_available and rap_qc_batch %}
+  <div class="mode-banner mb-cli" style="margin-top: 12px; border-left: 3px solid #4D90FF; padding: 10px 14px; background: rgba(77,144,255,0.06); border-radius: 0 6px 6px 0;">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px;">
+      <div>
+        <div style="font-size: 12px; font-weight: 600;">{% trans "QC checks available" %}</div>
+        <div style="font-family: 'Segoe UI Mono', 'Cascadia Mono', Consolas, ui-monospace, monospace; font-size: 10px; color: #6B7A99; margin-top: 4px;">
+          {% trans "From" %} {{ rap_qc_batch.batch_ref }} · {{ rap_qc_batch.imported_at|date:"d M Y" }}
+        </div>
+      </div>
+      <a href="{% url 'admin:rap_import_rapimportbatch_change' rap_qc_batch.pk %}"
+         style="font-family:'Segoe UI Mono','Cascadia Mono',Consolas,ui-monospace,monospace;font-size:10px;color:#4D90FF;">
+        {% trans "View QC report" %} →
+      </a>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

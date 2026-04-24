@@ -1,0 +1,62 @@
+<!-- templates/admin/file_upload.html -->
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+{% block content %}
+<div id="content-main">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-row">
+            {{ form.file.label_tag }}
+            {{ form.file }}
+            <div>
+                <p>
+                    {{ form.dataset.label_tag }}
+                </p>
+                <p>
+                    {{ form.dataset }}
+                </p>
+            </div>
+            <div>
+                <p>
+                    {{ form.format_style.label_tag }}
+                </p>
+                <p>
+                    {{ form.format_style }}
+                </p>
+                {% if form.format_style.help_text %}
+                <p class="help">{{ form.format_style.help_text }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <p>
+                    {{ form.year.label_tag }}
+                </p>
+                <p>
+                    {{ form.year }}
+                </p>
+                {% if form.year.help_text %}
+                <p class="help">{{ form.year.help_text }}</p>
+                {% endif %}
+            </div>
+            {% if form.csv_file.errors %}
+                <div class="error">
+                    {{ form.csv_file.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="submit-row">
+            <input
+                type="submit"
+                value="{% trans 'Import File' %}"
+                class="default"
+            />
+        </div>
+    </form>
+
+    {% if form.errors %}
+        <div class="errornote">{% trans "Please correct the errors below." %}</div>
+    {% endif %}
+</div>
+{% endblock %}
