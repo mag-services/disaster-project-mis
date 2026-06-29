@@ -19,3 +19,8 @@ Create a superuser to login to the admin:
 ```bash
 docker-compose run --rm web ./manage.py createsuperuser
 ```
+
+## Backend user manual
+
+- [DRMIS Backend User Manual](backend-user-manual.md) — guidance for dataset upload, RAP imports, backups/restores, and admin workflows.
+
